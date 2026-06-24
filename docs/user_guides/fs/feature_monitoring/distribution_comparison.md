@@ -59,5 +59,21 @@ You control the binning with the following parameters:
 - `smoothing_epsilon` — a small additive constant applied to bins to avoid `log(0)` in log-based metrics such as PSI and KL divergence.
   Defaults to `1e-6`.
 
+## Embedding features
+
+Distribution comparison also supports features of type embedding (high-dimensional vectors), which are otherwise skipped by statistics computation.
+Hopsworks reduces each embedding to the L2 norm of its vector, builds a distribution over those per-row norms, and compares the detection and reference windows exactly as it does for a numeric feature.
+This detects drift in the magnitude of your embeddings, for example when the embedding model is changed or its inputs shift in scale.
+
+You configure it like any other feature, by passing the embedding feature name to `compare_on_distribution`.
+Because the norm is numeric, every distance metric applies, including `WASSERSTEIN` and `KOLMOGOROV_SMIRNOV`.
+
+!!! tip "Directional drift"
+    Norm distribution drift captures a change in the magnitude of your embeddings, not their direction.
+    To detect a shift in the direction of an embedding (the position of its centroid), use the `centroid_distance` scalar metric described in the [Statistics comparison guide](statistics_comparison.md#comparison-criteria).
+
+!!! info "Compute engine"
+    Embedding statistics are computed by the Spark statistics engine, so embedding monitoring requires the statistics job to run on Spark, which is the default for scheduled feature monitoring.
+
 !!! info "Next steps"
     Distribution comparison results integrate with the same [alerting](index.md#alerting) and [interactive graph](interactive_graph.md) tooling as scalar statistics comparison.

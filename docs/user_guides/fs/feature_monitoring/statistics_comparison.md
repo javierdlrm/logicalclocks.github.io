@@ -52,6 +52,11 @@ The criteria described below apply to the comparison of a single scalar metric u
     Alternatively, you can compare the whole distribution of a feature between the detection and reference windows using metrics such as PSI or KL divergence.
     See the [Distribution comparison guide](distribution_comparison.md) for details.
 
+!!! tip "Embedding features"
+    Features of type embedding support the `centroid_distance` scalar metric, which computes the L2 distance between the mean vector (centroid) of the detection and reference windows.
+    This detects a shift in the direction of your embeddings.
+    Embedding features also support [distribution comparison](distribution_comparison.md#embedding-features) over the vector norm, which detects a shift in their magnitude.
+
 ??? no-icon "Statistics metric"
 
     Although all descriptive statistics are computed on the pre-defined windows of feature data, the comparison of statistics is performed only on one of the statistics metrics.

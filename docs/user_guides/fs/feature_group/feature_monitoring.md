@@ -238,6 +238,30 @@ See the API reference for [`FeatureMonitoringConfig.compare_on_distribution`][hs
 !!! tip "More distribution options"
     See the [Distribution comparison guide](../feature_monitoring/distribution_comparison.md) for the full list of metrics and binning strategies.
 
+#### Embedding features
+
+For a feature of type embedding, you can monitor drift in the distribution of its vector norm with `compare_on_distribution`, or in the position of its centroid with the `centroid_distance` scalar metric.
+
+=== "Python"
+
+    ```python
+    # drift in the magnitude of the embedding (norm distribution)
+    fm_monitoring_config.compare_on_distribution(
+        feature_name="embedding",
+        metric="PSI",
+        threshold=0.2,
+    )
+
+    # or drift in the direction of the embedding (centroid distance)
+    fm_monitoring_config.compare_on(
+        feature_name="embedding",
+        metric="centroid_distance",
+        threshold=0.1,
+    )
+    ```
+
+See the [Embedding features section](../feature_monitoring/distribution_comparison.md#embedding-features) of the Distribution comparison guide for details.
+
 ### Step 6: Save configuration
 
 Finally, you can save your feature monitoring configuration by calling the `save` method.
