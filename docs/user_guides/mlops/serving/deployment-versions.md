@@ -160,6 +160,7 @@ The artifact files of each version, such as the predictor and transformer script
 A script read from a HopsFS path or a git repository is stored in the version as that path or repository, not copied, so a rollback restores the configuration but not the code.
 
 Inside a deployment, the active version number is available in the `DEPLOYMENT_VERSION` environment variable, and the local path to its artifact files in `ARTIFACT_FILES_PATH`.
+In a pod of an [A/B testing][ab-testing] candidate, `DEPLOYMENT_VERSION` holds the version number of the candidate instead.
 
 !!! warning
     All files under `/Models` and `/Deployments` are managed by Hopsworks.
