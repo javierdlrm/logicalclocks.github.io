@@ -270,6 +270,7 @@
 ##### Model Deployment
 - [Deployment Creation](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment/index.md))
 - [Deployment State](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment-state/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment-state/index.md))
+- [Deployment Versions](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment-versions/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment-versions/index.md))
 - [Deployment Schema](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment-schema/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/deployment-schema/index.md))
 - [Predictor (KServe)](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/predictor/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/predictor/index.md))
 - [Transformer (KServe)](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/transformer/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/transformer/index.md))
@@ -322,7 +323,9 @@
 - [IAM Role Chaining](https://docs.hopsworks.ai/latest/setup_installation/admin/roleChaining/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/roleChaining/index.md))
 - [Configure Project Mapping](https://docs.hopsworks.ai/latest/setup_installation/admin/configure-project-mapping/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/configure-project-mapping/index.md))
 - [Airflow 3 operator notes](https://docs.hopsworks.ai/latest/setup_installation/admin/airflow3/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/airflow3/index.md))
+- [Kafka 4 and KRaft upgrade notes](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka4/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka4/index.md))
 - [Search Index](https://docs.hopsworks.ai/latest/setup_installation/admin/search_index/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/search_index/index.md))
+- [Upgrading OpenSearch](https://docs.hopsworks.ai/latest/setup_installation/admin/upgrade_opensearch/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/upgrade_opensearch/index.md))
 
 #### Monitoring
 - [Services Dashboards](https://docs.hopsworks.ai/latest/setup_installation/admin/monitoring/grafana/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/monitoring/grafana/index.md))
@@ -478,6 +481,7 @@
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_logging​_config](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_logging_config/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_logging_config/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_schema](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_schema/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_schema/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_tracing​_config](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_tracing_config/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_tracing_config/index.md))
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_version](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_version/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_version/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> inference​_batcher](https://docs.hopsworks.ai/latest/python-api/hsml/inference_batcher/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/inference_batcher/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> inference​_logger](https://docs.hopsworks.ai/latest/python-api/hsml/inference_logger/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/inference_logger/index.md))
 
