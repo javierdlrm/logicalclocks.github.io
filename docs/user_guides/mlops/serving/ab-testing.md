@@ -26,7 +26,7 @@ A candidate relates to the [deployment versions][deployment-versions] of the dep
 
 - A candidate takes the next version number, but it is not activated.
 - Rolling it out activates it, with the activation reason `Rollout` in the `Versions` card, and the deployment moves to that number.
-- Discarding it keeps the number as a version that was never activated, so numbers are never reused and logged predictions stay attributable.
+- Discarding it keeps the number as a version that was never activated, so numbers are never reused and logged predictions stay attributable. Such a version cannot be rolled back to.
 - While a candidate exists, `Save`, `Save as new version`, `Roll back` and `Stop` are refused until you roll out or discard it.
 - A candidate cannot be edited: discard it and start a new one.
 
