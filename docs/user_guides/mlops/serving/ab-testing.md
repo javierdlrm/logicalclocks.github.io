@@ -38,6 +38,9 @@ The rest of the traffic goes to the live version.
 Both are reached through the normal endpoint of the deployment, so nothing changes for clients, see the [REST API Guide](rest-api.md).
 When the deployment has a transformer, each of the two has its own transformer and predictor.
 
+Hopsworks routes a deployment in Standard mode itself, through an Istio `VirtualService` it owns, and a test only changes the weights of that route.
+A deployment started by an earlier Hopsworks version is still routed by KServe until it is next saved or its first candidate is started; starting that first candidate re-renders the live version once, which restarts its pods in a rolling update.
+
 ## Web UI
 
 ### Step 1: Start a candidate
