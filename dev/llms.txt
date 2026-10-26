@@ -84,6 +84,7 @@
 - [Unity Catalog](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/unity_catalog/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/unity_catalog/index.md))
 - [SAP HANA](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sap_hana/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sap_hana/index.md))
 - [Hopsworks](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/hopsworks/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/hopsworks/index.md))
+- [SharePoint](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sharepoint/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sharepoint/index.md))
 - [Usage](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/usage/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/usage/index.md))
 
 #### Feature Group
@@ -496,6 +497,7 @@
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> online​_ingestion](https://docs.hopsworks.ai/latest/python-api/hsfs/core/online_ingestion/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/core/online_ingestion/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> online​_ingestion​_failure](https://docs.hopsworks.ai/latest/python-api/hsfs/core/online_ingestion_failure/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/core/online_ingestion_failure/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> online​_ingestion​_result](https://docs.hopsworks.ai/latest/python-api/hsfs/core/online_ingestion_result/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/core/online_ingestion_result/index.md))
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> sharepoint​_sync](https://docs.hopsworks.ai/latest/python-api/hsfs/core/sharepoint_sync/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/core/sharepoint_sync/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> statistics​_comparison​_config](https://docs.hopsworks.ai/latest/python-api/hsfs/core/statistics_comparison_config/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/core/statistics_comparison_config/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> statistics​_comparison​_result](https://docs.hopsworks.ai/latest/python-api/hsfs/core/statistics_comparison_result/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/core/statistics_comparison_result/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> embedding](https://docs.hopsworks.ai/latest/python-api/hsfs/embedding/) ([md](https://docs.hopsworks.ai/latest/python-api/hsfs/embedding/index.md))
