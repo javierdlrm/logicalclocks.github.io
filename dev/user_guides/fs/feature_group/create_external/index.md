@@ -131,8 +131,11 @@ Users can select which subset of the feature group data they want to make availa
 
 Hopsworks Feature Store does not support time-travel queries on external feature groups.
 
-Additionally, support for `.read()` and `.show()` methods when using by the Python engine is limited to external feature groups defined on BigQuery and Snowflake and only through the ArrowFlight Server with DuckDB, which Hopsworks enables by default.
+With the Python engine, `.read()` and `.show()` read an external feature group through the ArrowFlight Server with DuckDB, which Hopsworks enables by default.
+This supports external feature groups on Snowflake, BigQuery, Redshift, SQL databases (MySQL, PostgreSQL, Oracle, SQL Server and the other SQL database types), SAP HANA, Unity Catalog, MongoDB, Elasticsearch, another Hopsworks cluster, S3, GCS and AWS Glue.
 Nevertheless, external feature groups defined top of any data source can be used to create a training dataset from a Python environment invoking one of the following methods: [`FeatureView.create_training_data`][hsfs.feature_view.FeatureView.create_training_data], [`FeatureView.create_train_test_split`][hsfs.feature_view.FeatureView.create_train_test_split] or [`FeatureView.create_train_validation_test_split`][hsfs.feature_view.FeatureView.create_train_validation_test_split].
+A training dataset with splits, transformation functions, a format other than Parquet or its own sink is materialized by a Spark job, and Spark cannot read a Hopsworks data source.
+For an external feature group on another Hopsworks cluster, use `create_training_data` without those, which the ArrowFlight Server materializes, or copy the remote feature group into a feature group of this cluster with a [dltHub ingestion job][ingest-data-with-dlthub] first.
 
 !!! api "API reference"
 
@@ -202,3 +205,69 @@ As the last step, you will be able to rename the feature groups and confirm thei
     <img src="../../../../assets/images/guides/fs/data_source/confirm_feature_group.png" alt="Confirm the creation of a new feature group">
   </figure>
 </p>
+
+## Data Source submenu { #external-feature-group-data-source }
+
+An external feature group has a `Data Source` entry in its menu, after `Overview`.
+The page shows the data source the feature group reads through, which the overview used to show as a `Storage Connector` panel, and a `Test Connection` button.
+`Test Connection` reads one row of the backing table or query as you and shows the result; it takes up to a minute.
+
+For a data source with [provided credentials][data-source-provided-credentials] the page adds a `Your access` section: your access state, when it was last checked, the message the database returned, `My credentials` to add or change your own credentials, and `Test Connection`.
+The states and what each one means are listed in the data source guide, under access to mounted tables.
+
+### Greyed-out feature groups in the catalog
+
+In the feature group catalog, an external feature group you cannot read with your own credentials is greyed out, with the reason under its name and one button:
+
+| Your state | Reason shown | Button |
+| --- | --- | --- |
+| `NO_CREDENTIALS` | Add your credentials for data source `<name>` to use this feature group. | `Add my credentials` |
+| `INVALID_CREDENTIALS` | Your credentials for data source `<name>` were rejected. | `Test Connection` |
+| `NO_ACCESS` | You don't have privileges to read the backing table `<database>.<table>` in data source `<name>`. | `Test Connection` |
+| `ERROR` | Could not check access to data source `<name>`: `<message>`. | `Test Connection` |
+
+While a check is queued (`PENDING`) the card shows `Checking access` and keeps its normal look.
+A greyed-out feature group stays clickable, so its pages and its Data Source submenu remain reachable.
+
+### Feature groups from a shared feature store { #external-feature-group-shared-feature-store }
+
+Credentials for a provided data source belong to the project that owns the data source.
+To read a feature group from a feature store shared with your project, add your credentials in the project that owns its data source.
+In your own project, the Data Source submenu and the greyed-out card point you to the owning project instead of opening the credentials dialog.
+
+### From the API and the CLI { #external-feature-group-data-source-access }
+
+The same state is on the feature group object, and the check can be run from code:
+
+```python
+fg = fs.get_feature_group("sales_external", version=1)
+fg.data_source_access  # None for a data source with shared credentials
+
+access = fg.test_data_source_access()
+if access["status"] != "OK":
+    print(access["status"], access["error_code"], access["message"])
+```
+
+`hops fg list` has an `ACCESS` column with your state in lower case, and `-` for every other feature group.
+`hops fg test-access` runs the check:
+
+```bash
+hops fg test-access sales_external --version 1 --json
+```
+
+```json
+{
+  "status": "NO_ACCESS",
+  "error_code": "ORA-00942",
+  "message": "ORA-00942: table or view does not exist",
+  "checked_at": "2026-10-07T09:14:02Z"
+}
+```
+
+!!! api "API reference"
+
+    - <code class="doc-symbol doc-symbol-class"></code> [`ExternalFeatureGroup`][hsfs.feature_group.ExternalFeatureGroup]
+        - <code class="doc-symbol doc-symbol-attribute"></code> [`data_source_access`][external-feature-group-data-source-access]
+        - <code class="doc-symbol doc-symbol-method"></code> [`test_data_source_access`][external-feature-group-data-source-access]
+
+    <a class="hops-api-cta" href="../../../../python-api/hopsworks/">Browse the full Python API :material-arrow-right:</a>

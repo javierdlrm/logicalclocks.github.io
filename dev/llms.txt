@@ -83,6 +83,7 @@
 - [REST API](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/rest_api/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/rest_api/index.md))
 - [Unity Catalog](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/unity_catalog/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/unity_catalog/index.md))
 - [SAP HANA](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sap_hana/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sap_hana/index.md))
+- [Hopsworks](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/hopsworks/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/hopsworks/index.md))
 - [Usage](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/usage/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/usage/index.md))
 
 #### Feature Group
@@ -213,6 +214,7 @@
 
 #### Terminal
 - [Browser Terminal](https://docs.hopsworks.ai/latest/user_guides/compute/terminal/) ([md](https://docs.hopsworks.ai/latest/user_guides/compute/terminal/index.md))
+- [Start the Terminal](https://docs.hopsworks.ai/latest/user_guides/projects/terminal/start/) ([md](https://docs.hopsworks.ai/latest/user_guides/projects/terminal/start/index.md))
 - [Teleport Sessions](https://docs.hopsworks.ai/latest/user_guides/projects/terminal/teleport/) ([md](https://docs.hopsworks.ai/latest/user_guides/projects/terminal/teleport/index.md))
 
 #### Jobs
@@ -245,6 +247,7 @@
 #### Query Engine (Trino)
 - [Query Engine](https://docs.hopsworks.ai/latest/user_guides/projects/trino/query_engine/) ([md](https://docs.hopsworks.ai/latest/user_guides/projects/trino/query_engine/index.md))
 - [Trino Catalogs](https://docs.hopsworks.ai/latest/user_guides/projects/trino/catalogs/) ([md](https://docs.hopsworks.ai/latest/user_guides/projects/trino/catalogs/index.md))
+- [Sharing](https://docs.hopsworks.ai/latest/user_guides/projects/trino/sharing/) ([md](https://docs.hopsworks.ai/latest/user_guides/projects/trino/sharing/index.md))
 - [Superset](https://docs.hopsworks.ai/latest/user_guides/projects/superset/superset/) ([md](https://docs.hopsworks.ai/latest/user_guides/projects/superset/superset/index.md))
 
 ### MLOps
@@ -298,6 +301,12 @@
 - [Agents](https://docs.hopsworks.ai/latest/user_guides/agents/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/index.md))
 - [Agent Tasks](https://docs.hopsworks.ai/latest/user_guides/agents/tasks/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/tasks/index.md))
 - [Agent Deployments](https://docs.hopsworks.ai/latest/user_guides/agents/deployments/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/deployments/index.md))
+- [Chat Contract](https://docs.hopsworks.ai/latest/user_guides/agents/chat_contract/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/chat_contract/index.md))
+- [Agent Memory](https://docs.hopsworks.ai/latest/user_guides/agents/memory/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/memory/index.md))
+- [Feedback](https://docs.hopsworks.ai/latest/user_guides/agents/feedback/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/feedback/index.md))
+- [Evaluation](https://docs.hopsworks.ai/latest/user_guides/agents/evaluation/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/evaluation/index.md))
+- [Monitoring](https://docs.hopsworks.ai/latest/user_guides/agents/monitoring/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/monitoring/index.md))
+- [Failure Analysis](https://docs.hopsworks.ai/latest/user_guides/agents/failure_analysis/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/failure_analysis/index.md))
 - [Migration 3.X to 4.0](https://docs.hopsworks.ai/latest/user_guides/migration/40_migration/) ([md](https://docs.hopsworks.ai/latest/user_guides/migration/40_migration/index.md))
 
 ## Administration
@@ -323,9 +332,20 @@
 - [IAM Role Chaining](https://docs.hopsworks.ai/latest/setup_installation/admin/roleChaining/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/roleChaining/index.md))
 - [Configure Project Mapping](https://docs.hopsworks.ai/latest/setup_installation/admin/configure-project-mapping/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/configure-project-mapping/index.md))
 - [Airflow 3 operator notes](https://docs.hopsworks.ai/latest/setup_installation/admin/airflow3/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/airflow3/index.md))
-- [Kafka 4 and KRaft upgrade notes](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka4/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka4/index.md))
 - [Search Index](https://docs.hopsworks.ai/latest/setup_installation/admin/search_index/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/search_index/index.md))
+- [HopsFS DataNode Drain](https://docs.hopsworks.ai/latest/setup_installation/admin/hopsfs_datanode_drain/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/hopsfs_datanode_drain/index.md))
+- [HopsFS CSI Driver](https://docs.hopsworks.ai/latest/setup_installation/admin/hopsfs_csi/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/hopsfs_csi/index.md))
+- [Dedicated Node Pools](https://docs.hopsworks.ai/latest/setup_installation/admin/node_pools/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/node_pools/index.md))
+- [KEDA Autoscaling](https://docs.hopsworks.ai/latest/setup_installation/admin/keda/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/keda/index.md))
+- [Kafka Quotas](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka_quotas/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka_quotas/index.md))
+- [Uninstalling Hopsworks](https://docs.hopsworks.ai/latest/setup_installation/admin/uninstall/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/uninstall/index.md))
+
+#### Upgrades
+- [Upgrading Hopsworks](https://docs.hopsworks.ai/latest/setup_installation/admin/upgrade/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/upgrade/index.md))
+- [Upgrading with Helm 4](https://docs.hopsworks.ai/latest/setup_installation/admin/helm4/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/helm4/index.md))
 - [Upgrading OpenSearch](https://docs.hopsworks.ai/latest/setup_installation/admin/upgrade_opensearch/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/upgrade_opensearch/index.md))
+- [Kafka 4 and KRaft upgrade notes](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka4/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka4/index.md))
+- [Kueue outside the Hopsworks namespace](https://docs.hopsworks.ai/latest/setup_installation/admin/kueue_external/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kueue_external/index.md))
 
 #### Monitoring
 - [Services Dashboards](https://docs.hopsworks.ai/latest/setup_installation/admin/monitoring/grafana/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/monitoring/grafana/index.md))
@@ -360,7 +380,37 @@
 - [Service Operations](https://docs.hopsworks.ai/latest/setup_installation/admin/operationLogs/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/operationLogs/index.md))
 - [Query Engine (Trino)](https://docs.hopsworks.ai/latest/setup_installation/admin/trino/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/trino/index.md))
 - [Superset](https://docs.hopsworks.ai/latest/setup_installation/admin/superset/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/superset/index.md))
-- [Helm Chart Values Reference](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/index.md))
+- [GPU Scheduling with Run:ai](https://docs.hopsworks.ai/latest/setup_installation/admin/run_ai/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/run_ai/index.md))
+
+### Helm Chart Values Reference
+- [Helm chart values reference](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/index.md))
+- [global](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/global/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/global/index.md))
+- [airflow](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/airflow/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/airflow/index.md))
+- [arrowflight](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/arrowflight/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/arrowflight/index.md))
+- [certs-operator](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/certs-operator/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/certs-operator/index.md))
+- [consul](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/consul/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/consul/index.md))
+- [docker-registry](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/docker-registry/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/docker-registry/index.md))
+- [grafana](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/grafana/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/grafana/index.md))
+- [hive](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hive/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hive/index.md))
+- [hopsfs](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs/index.md))
+- [hopsfs-csi](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs-csi/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs-csi/index.md))
+- [hopsworks](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsworks/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsworks/index.md))
+- [hw-keda](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-keda/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-keda/index.md))
+- [hw-kueue](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kueue/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kueue/index.md))
+- [hw-kyverno](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kyverno/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kyverno/index.md))
+- [judge](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/judge/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/judge/index.md))
+- [kafka](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/kafka/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/kafka/index.md))
+- [kserve](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/kserve/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/kserve/index.md))
+- [minio](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/minio/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/minio/index.md))
+- [olk](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/olk/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/olk/index.md))
+- [onlinefs](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/onlinefs/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/onlinefs/index.md))
+- [prometheus](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/prometheus/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/prometheus/index.md))
+- [ray](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/ray/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/ray/index.md))
+- [rondb](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/rondb/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/rondb/index.md))
+- [spark](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/spark/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/spark/index.md))
+- [superset](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/superset/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/superset/index.md))
+- [trino](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/trino/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/trino/index.md))
+- [vpa](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/vpa/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/vpa/index.md))
 
 ## Python API
 
@@ -377,6 +427,7 @@
 - [hopsworks.core](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> alerts​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/alerts_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/alerts_api/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> app​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/app_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/app_api/index.md))
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> costs​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/costs_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/costs_api/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> dataset​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/dataset_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/dataset_api/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> env​_var​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/env_var_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/env_var_api/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> environment​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/environment_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/environment_api/index.md))
@@ -395,6 +446,7 @@
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> trino​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/trino_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/trino_api/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> trino​_catalog​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/trino_catalog_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/trino_catalog_api/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> users​_api](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/users_api/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/core/users_api/index.md))
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> cost](https://docs.hopsworks.ai/latest/python-api/hopsworks/cost/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/cost/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> env​_var](https://docs.hopsworks.ai/latest/python-api/hopsworks/env_var/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/env_var/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> environment](https://docs.hopsworks.ai/latest/python-api/hopsworks/environment/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/environment/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> execution](https://docs.hopsworks.ai/latest/python-api/hopsworks/execution/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/execution/index.md))
@@ -403,6 +455,7 @@
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> git​_provider](https://docs.hopsworks.ai/latest/python-api/hopsworks/git_provider/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/git_provider/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> git​_remote](https://docs.hopsworks.ai/latest/python-api/hopsworks/git_remote/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/git_remote/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> git​_repo](https://docs.hopsworks.ai/latest/python-api/hopsworks/git_repo/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/git_repo/index.md))
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> gpu​_availability](https://docs.hopsworks.ai/latest/python-api/hopsworks/gpu_availability/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/gpu_availability/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> job](https://docs.hopsworks.ai/latest/python-api/hopsworks/job/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/job/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> job​_schedule](https://docs.hopsworks.ai/latest/python-api/hopsworks/job_schedule/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/job_schedule/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> kafka​_schema](https://docs.hopsworks.ai/latest/python-api/hopsworks/kafka_schema/) ([md](https://docs.hopsworks.ai/latest/python-api/hopsworks/kafka_schema/index.md))
@@ -479,6 +532,7 @@
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployable​_component](https://docs.hopsworks.ai/latest/python-api/hsml/deployable_component/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployable_component/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment](https://docs.hopsworks.ai/latest/python-api/hsml/deployment/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_logging​_config](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_logging_config/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_logging_config/index.md))
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_memory​_config](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_memory_config/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_memory_config/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_schema](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_schema/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_schema/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_tracing​_config](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_tracing_config/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_tracing_config/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> deployment​_version](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_version/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/deployment_version/index.md))
