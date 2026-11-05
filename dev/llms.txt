@@ -84,6 +84,8 @@
 - [Unity Catalog](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/unity_catalog/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/unity_catalog/index.md))
 - [SAP HANA](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sap_hana/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sap_hana/index.md))
 - [Hopsworks](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/hopsworks/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/hopsworks/index.md))
+- [Gmail](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/gmail/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/gmail/index.md))
+- [Outlook](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/outlook/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/outlook/index.md))
 - [SharePoint](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sharepoint/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/creation/sharepoint/index.md))
 - [Usage](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/usage/) ([md](https://docs.hopsworks.ai/latest/user_guides/fs/data_source/usage/index.md))
 
@@ -262,6 +264,7 @@
 - [Torch](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/tch/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/tch/index.md))
 - [Scikit-learn](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/skl/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/skl/index.md))
 - [LLM](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/llm/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/llm/index.md))
+- [Triton](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/triton/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/triton/index.md))
 - [Python](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/python/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/frameworks/python/index.md))
 - [Import from HuggingFace](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/import_huggingface/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/import_huggingface/index.md))
 - [Model Schema](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/model_schema/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/registry/model_schema/index.md))
@@ -279,6 +282,7 @@
 - [Predictor (KServe)](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/predictor/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/predictor/index.md))
 - [Transformer (KServe)](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/transformer/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/transformer/index.md))
 - [Inference Logger](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/inference-logger/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/inference-logger/index.md))
+- [Transformation Tracing](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/transformation-tracing/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/transformation-tracing/index.md))
 - [Inference Batcher](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/inference-batcher/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/inference-batcher/index.md))
 - [Resources](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/resources/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/resources/index.md))
 - [Autoscaling](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/autoscaling/) ([md](https://docs.hopsworks.ai/latest/user_guides/mlops/serving/autoscaling/index.md))
@@ -301,8 +305,9 @@
 ### Agents
 - [Agents](https://docs.hopsworks.ai/latest/user_guides/agents/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/index.md))
 - [Agent Tasks](https://docs.hopsworks.ai/latest/user_guides/agents/tasks/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/tasks/index.md))
-- [Agent Deployments](https://docs.hopsworks.ai/latest/user_guides/agents/deployments/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/deployments/index.md))
-- [Chat Contract](https://docs.hopsworks.ai/latest/user_guides/agents/chat_contract/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/chat_contract/index.md))
+
+#### Agent Deployments
+- [How To Run An Agent Deployment](https://docs.hopsworks.ai/latest/user_guides/agents/deployments/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/deployments/index.md))
 - [Agent Memory](https://docs.hopsworks.ai/latest/user_guides/agents/memory/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/memory/index.md))
 - [Feedback](https://docs.hopsworks.ai/latest/user_guides/agents/feedback/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/feedback/index.md))
 - [Evaluation](https://docs.hopsworks.ai/latest/user_guides/agents/evaluation/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/evaluation/index.md))
@@ -338,7 +343,10 @@
 - [HopsFS CSI Driver](https://docs.hopsworks.ai/latest/setup_installation/admin/hopsfs_csi/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/hopsfs_csi/index.md))
 - [Dedicated Node Pools](https://docs.hopsworks.ai/latest/setup_installation/admin/node_pools/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/node_pools/index.md))
 - [KEDA Autoscaling](https://docs.hopsworks.ai/latest/setup_installation/admin/keda/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/keda/index.md))
+- [Envoy Gateway](https://docs.hopsworks.ai/latest/setup_installation/admin/envoy_gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/envoy_gateway/index.md))
+- [Model Serving Ingress Gateway](https://docs.hopsworks.ai/latest/setup_installation/admin/model_serving_gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/model_serving_gateway/index.md))
 - [Kafka Quotas](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka_quotas/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka_quotas/index.md))
+- [OnlineFS Configuration](https://docs.hopsworks.ai/latest/setup_installation/admin/onlinefs/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/onlinefs/index.md))
 - [Uninstalling Hopsworks](https://docs.hopsworks.ai/latest/setup_installation/admin/uninstall/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/uninstall/index.md))
 
 #### Upgrades
@@ -382,6 +390,7 @@
 - [Query Engine (Trino)](https://docs.hopsworks.ai/latest/setup_installation/admin/trino/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/trino/index.md))
 - [Superset](https://docs.hopsworks.ai/latest/setup_installation/admin/superset/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/superset/index.md))
 - [GPU Scheduling with Run:ai](https://docs.hopsworks.ai/latest/setup_installation/admin/run_ai/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/run_ai/index.md))
+- [Triton Inference Server](https://docs.hopsworks.ai/latest/setup_installation/admin/triton/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/triton/index.md))
 
 ### Helm Chart Values Reference
 - [Helm chart values reference](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/index.md))
@@ -396,6 +405,7 @@
 - [hopsfs](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs/index.md))
 - [hopsfs-csi](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs-csi/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs-csi/index.md))
 - [hopsworks](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsworks/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsworks/index.md))
+- [hw-envoy-gateway](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-envoy-gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-envoy-gateway/index.md))
 - [hw-keda](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-keda/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-keda/index.md))
 - [hw-kueue](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kueue/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kueue/index.md))
 - [hw-kyverno](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kyverno/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kyverno/index.md))
@@ -566,8 +576,17 @@
 #### <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> torch
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> signature](https://docs.hopsworks.ai/latest/python-api/hsml/torch/signature/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/torch/signature/index.md))
 - [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> transformer](https://docs.hopsworks.ai/latest/python-api/hsml/transformer/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/transformer/index.md))
+
+#### <code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> triton
+- [<code class="doc-symbol doc-symbol-nav doc-symbol-module"></code> signature](https://docs.hopsworks.ai/latest/python-api/hsml/triton/signature/) ([md](https://docs.hopsworks.ai/latest/python-api/hsml/triton/signature/index.md))
 - [Java API](javadoc)
 
 ## Reference
 - [REST API Status Codes](https://docs.hopsworks.ai/latest/reference/rest_error_codes/) ([md](https://docs.hopsworks.ai/latest/reference/rest_error_codes/index.md))
 - [Docs for AI agents](https://docs.hopsworks.ai/latest/ai/) ([md](https://docs.hopsworks.ai/latest/ai/index.md))
+
+## Releases
+- [Releases](https://docs.hopsworks.ai/latest/releases/) ([md](https://docs.hopsworks.ai/latest/releases/index.md))
+- [5.2](https://docs.hopsworks.ai/latest/releases/5.2/) ([md](https://docs.hopsworks.ai/latest/releases/5.2/index.md))
+- [5.1](https://docs.hopsworks.ai/latest/releases/5.1/) ([md](https://docs.hopsworks.ai/latest/releases/5.1/index.md))
+- [5.0](https://docs.hopsworks.ai/latest/releases/5.0/) ([md](https://docs.hopsworks.ai/latest/releases/5.0/index.md))
