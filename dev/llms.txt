@@ -313,6 +313,7 @@
 - [Evaluation](https://docs.hopsworks.ai/latest/user_guides/agents/evaluation/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/evaluation/index.md))
 - [Monitoring](https://docs.hopsworks.ai/latest/user_guides/agents/monitoring/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/monitoring/index.md))
 - [Failure Analysis](https://docs.hopsworks.ai/latest/user_guides/agents/failure_analysis/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/failure_analysis/index.md))
+- [Coding Agents](https://docs.hopsworks.ai/latest/user_guides/agents/coding_agents/) ([md](https://docs.hopsworks.ai/latest/user_guides/agents/coding_agents/index.md))
 - [Migration 3.X to 4.0](https://docs.hopsworks.ai/latest/user_guides/migration/40_migration/) ([md](https://docs.hopsworks.ai/latest/user_guides/migration/40_migration/index.md))
 
 ## Administration
@@ -334,6 +335,7 @@
 - [Python Build Performance](https://docs.hopsworks.ai/latest/setup_installation/admin/build_performance/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/build_performance/index.md))
 - [User Management](https://docs.hopsworks.ai/latest/setup_installation/admin/user/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/user/index.md))
 - [Project Management](https://docs.hopsworks.ai/latest/setup_installation/admin/project/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/project/index.md))
+- [Custom Project Roles](https://docs.hopsworks.ai/latest/setup_installation/admin/project_roles/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/project_roles/index.md))
 - [Configure Alerts](https://docs.hopsworks.ai/latest/setup_installation/admin/alert/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/alert/index.md))
 - [IAM Role Chaining](https://docs.hopsworks.ai/latest/setup_installation/admin/roleChaining/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/roleChaining/index.md))
 - [Configure Project Mapping](https://docs.hopsworks.ai/latest/setup_installation/admin/configure-project-mapping/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/configure-project-mapping/index.md))
@@ -344,9 +346,11 @@
 - [Dedicated Node Pools](https://docs.hopsworks.ai/latest/setup_installation/admin/node_pools/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/node_pools/index.md))
 - [KEDA Autoscaling](https://docs.hopsworks.ai/latest/setup_installation/admin/keda/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/keda/index.md))
 - [Envoy Gateway](https://docs.hopsworks.ai/latest/setup_installation/admin/envoy_gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/envoy_gateway/index.md))
+- [LLM Gateway](https://docs.hopsworks.ai/latest/setup_installation/admin/llm_gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/llm_gateway/index.md))
 - [Model Serving Ingress Gateway](https://docs.hopsworks.ai/latest/setup_installation/admin/model_serving_gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/model_serving_gateway/index.md))
 - [Kafka Quotas](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka_quotas/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/kafka_quotas/index.md))
 - [OnlineFS Configuration](https://docs.hopsworks.ai/latest/setup_installation/admin/onlinefs/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/onlinefs/index.md))
+- [Security Response Headers](https://docs.hopsworks.ai/latest/setup_installation/admin/security_headers/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/security_headers/index.md))
 - [Uninstalling Hopsworks](https://docs.hopsworks.ai/latest/setup_installation/admin/uninstall/) ([md](https://docs.hopsworks.ai/latest/setup_installation/admin/uninstall/index.md))
 
 #### Upgrades
@@ -406,6 +410,7 @@
 - [hopsfs-csi](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs-csi/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsfs-csi/index.md))
 - [hopsworks](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsworks/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hopsworks/index.md))
 - [hw-envoy-gateway](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-envoy-gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-envoy-gateway/index.md))
+- [hw-envoy-ai-gateway](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-envoy-ai-gateway/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-envoy-ai-gateway/index.md))
 - [hw-keda](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-keda/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-keda/index.md))
 - [hw-kueue](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kueue/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kueue/index.md))
 - [hw-kyverno](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kyverno/) ([md](https://docs.hopsworks.ai/latest/setup_installation/common/helm_chart_values/hw-kyverno/index.md))
