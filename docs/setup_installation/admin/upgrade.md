@@ -17,7 +17,7 @@ The commands assume Hopsworks is installed in the `hopsworks` namespace.
 | ------- | ---------- | ----------------- |
 | [5.0.x to 5.1.x][upgrade-50-to-51] | 1.3.x to 2.19.x | Kubernetes 1.34 or later before the upgrade, a first Helm 4 upgrade, and from 5.0.13 or earlier to 5.1.2 or later [the Trino query history][upgrade-trino-query-history]. |
 | [5.1.x to 5.2.x][upgrade-51-to-52] | 2.19.x to 3.8.0: upgrade to 5.2.1 or later | The index pass, Kafka moves to KRaft, KEDA, Kubernetes 1.37 only afterwards, Trino, from 5.2.2 [OnlineFS and the schema migrations][upgrade-changes-from-522], and from 5.2.3 with your own image registry [the Envoy image of Python apps][upgrade-changes-from-523]. |
-| [5.2.x to 5.3.x][upgrade-52-to-53] | stays on 3.8.0 | [Additional prerequisites][upgrade-additional-prerequisites], [Strimzi 1.3][upgrade-strimzi-13] with central before its satellites, ICEBERG feature groups in Trino, the Filebeat registry, with your own pipelines, outputs or plugins [Logstash 9][upgrade-logstash-9], the memory of the OTLP sidecar of agent deployments, [Envoy Gateway][upgrade-envoy-gateway] and [LLM Gateway][upgrade-llm-gateway] when turned on, with an external Kafka [the topics Hopsworks creates and deletes on it][upgrade-byok-topics], [notification topics and shared feature stores][upgrade-notification-topics], from 5.2.0 [the subset shares in Trino][upgrade-trino-subset-shares] and the OpenSearch security configuration, and from 5.2.0 or 5.2.1 [OnlineFS and the schema migrations][upgrade-changes-from-522]. |
+| [5.2.x to 5.3.x][upgrade-52-to-53] | stays on 3.8.0 | [Additional prerequisites][upgrade-additional-prerequisites], [Strimzi 1.3][upgrade-strimzi-13] with central before its satellites, ICEBERG feature groups in Trino, the Filebeat registry, with your own pipelines, outputs or plugins [Logstash 9][upgrade-logstash-9], the memory of the OTLP sidecar of agent deployments, [the two-step Istio upgrade][upgrade-istio-131], [Envoy Gateway][upgrade-envoy-gateway] and [LLM Gateway][upgrade-llm-gateway] when turned on, with an external Kafka [the topics Hopsworks creates and deletes on it][upgrade-byok-topics], [notification topics and shared feature stores][upgrade-notification-topics], from 5.2.0 [the subset shares in Trino][upgrade-trino-subset-shares] and the OpenSearch security configuration, and from 5.2.0 or 5.2.1 [OnlineFS and the schema migrations][upgrade-changes-from-522]. |
 
 ## Before every upgrade { #upgrade-before-every-upgrade }
 
@@ -500,6 +500,31 @@ If the UI calls model deployments on another host or port, or another site frame
 A page the policy breaks shows a `Content-Security-Policy` error in the browser console; set `cspMode: report-only` while [finding what it needs][security-headers-troubleshooting].
 
 Pages are no longer served from the browser's offline cache, so a page needs the cluster to be reachable.
+
+### Istio 1.31 { #upgrade-istio-131 }
+
+Istio moves from 1.29 to 1.31.
+Istio upgrades in place one minor release at a time, so within the same `helm upgrade` the Istio install hook upgrades istiod and the gateways to 1.30 first, waits until they are rolled out, and then upgrades them to 1.31.
+
+- **Time.**
+  Each of the two steps waits up to `kserve.istio.istioctl.readinessTimeout` (15 minutes) for Istio to be ready, so count up to 30 minutes for the hook in `helm upgrade --timeout`.
+- **Model deployments.**
+  The Istio ingress gateway and the cluster-local gateway restart once per step.
+  With one replica each, the default, requests to model deployments fail while each restart lasts, twice.
+  To keep serving, set `kserve.istio.gateways.ingress.replicaCount` and `kserve.istio.gateways.clusterLocal.replicaCount` to 2 or more before the upgrade, so one replica serves while the other restarts.
+- **Your own image registry.**
+  Mirror `istio/pilot` and `istio/proxyv2` at both `1.30.8` and `1.31.4` before the upgrade.
+  The chart's `vendor_images.sh` lists all four.
+- **Sidecars you injected yourself.**
+  The chart injects no Istio sidecar.
+  A workload you gave an Istio sidecar keeps its 1.29 proxy until it restarts, two minor releases behind istiod, so restart it after the upgrade.
+- **If the hook fails.**
+  Fix the cause and run `helm upgrade` again.
+  The hook reads which Istio release istiod and the gateways run and continues from the step that did not finish.
+  It stops with an error, and installs nothing, when they run a release older than 1.29 or newer than 1.31.
+- **Rollback.**
+  A `helm rollback` to 5.2 runs the 5.2 hook, which installs Istio 1.29 over 1.31, a downgrade Istio does not support.
+  Restore from the backup instead, as described in [Disaster Recovery][disaster-recovery].
 
 ## Changes from 5.2.2 { #upgrade-changes-from-522 }
 
