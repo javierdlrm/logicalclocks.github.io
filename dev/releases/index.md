@@ -11,12 +11,13 @@ When you upgrade, read the breaking changes of every release between yours and t
 
 | Helm chart | Released | Python client |
 | ---------- | -------- | ------------- |
+| [5.2.5][hopsworks-5-2-5] | 2026-11-17 | [5.2.4](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.2.4) |
 | [5.2.4][hopsworks-5-2-4] | 2026-11-05 | [5.2.3](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.2.3) |
 | [5.2.3][hopsworks-5-2-3] | 2026-10-29 | [5.2.2](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.2.2) |
 | [5.2.2][hopsworks-5-2-2] | 2026-10-28 | [5.2.2](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.2.2) |
 | [5.2.1][hopsworks-5-2-1] | 2026-10-16 | [5.2.1](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.2.1) |
 | [5.2.0][hopsworks-5-2-0] | 2026-10-15 | [5.2.1](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.2.1) |
-| [5.1.3][hopsworks-5-1-3] | TBD | [5.1.2](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.1.2) |
+| [5.1.3][hopsworks-5-1-3] | 2026-11-16 | [5.1.3](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.1.3) |
 | [5.1.2][hopsworks-5-1-2] | 2026-10-16 | [5.1.2](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.1.2) |
 | [5.1.1][hopsworks-5-1-1] | 2026-10-09 | [5.1.1](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.1.1) |
 | [5.1.0][hopsworks-5-1-0] | 2026-09-24 | [5.1.0](https://github.com/logicalclocks/hopsworks-api/releases/tag/5.1.0) |
