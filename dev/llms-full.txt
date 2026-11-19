@@ -527,6 +527,9 @@ The ML assets can only be accessed by project members, and there is role-based a
 
 --8<-- "concepts/projects/governance/projects-and-governance.html"
 
+Inside a project, every member also has a private home directory that no other member can open.
+[Project and User Isolation][project-and-user-isolation] explains both levels: the project sandbox, and the home directories within it.
+
 ## Dev/Staging/Prod for Data
 
 Projects enable you to define development, staging, and even production projects on the same cluster.
@@ -546,6 +549,159 @@ Hopsworks stores audit logs for all calls on its REST API in its file system, Ho
 The audit log can be used to analyze the historical usage of services by users.
 
 ================================================================================
+# Project and User Isolation
+Source: https://docs.hopsworks.ai/latest/concepts/projects/isolation/
+
+# Project and User Isolation
+
+Hopsworks keeps work apart at two levels.
+A **project** is a sandbox for a team: its data, models and services belong to its members, and people outside the project reach them only when a Data owner shares them.
+Inside a project, members share the project's datasets according to their role, and each member also has a **home directory** that no other member can open.
+
+--8<-- "concepts/projects/isolation/two-levels.html"
+
+## At a glance
+
+| What | Inside the project | From other projects |
+| --- | --- | --- |
+| Datasets, models and the feature store | Members, as their role and the dataset's permission allow | Only when shared with their project |
+| Home directories | Only the member it belongs to | Never |
+
+## Project sandbox { #project-sandbox }
+
+A project groups everything a team needs to build an AI system: feature groups, training data, models, deployments, jobs, notebooks and files.
+The sandbox makes sure that all of it stays inside the project.
+
+### Membership opens the project
+
+You reach a project's resources only as a member of the project.
+The UI, the REST API and the Python client all check your membership first, and refuse the request if you are not a member.
+Once you are in, your role decides what you can do, see [the project roles][how-to-manage-members-to-a-project].
+Platform administrators manage projects from the administration pages, which have their own access rules.
+
+### One identity per project
+
+When you join a project, Hopsworks gives you a separate identity in that project.
+Everything you start in the project runs with it, from notebooks and jobs to the terminal, and the files you create there belong to it.
+
+If you are a member of two projects, you have two separate identities.
+Being a member of both does not let a notebook or job in one project read the files of the other: those files must first be shared with the project it runs in.
+
+### Files and datasets
+
+Each project has its own directory in HopsFS, `/Projects/<project>`.
+The directories directly under it are the project's datasets.
+Nobody outside the project can read or write a dataset unless it is shared with their project.
+
+Inside the project, each dataset has a permission that decides what each role can do with its files:
+
+| Dataset permission | Data owners | Data scientists | Observers |
+| --- | --- | --- | --- |
+| Editable by all | Read and write | Read and write | Read |
+| Editable by owners | Read and write | Read | Read |
+| Read only | Read | Read | Read |
+
+The datasets Hopsworks creates for you, such as `Resources`, `Jupyter`, `Logs` and `Models`, are editable by all.
+The `Users` dataset is the exception, with rules of its own, see [User home directories][user-home-directories].
+The feature store is editable by owners: Data scientists read its files, and Data owners write them.
+Members with the Feature store restricted role get no access to the feature store's files, and a [custom role][custom-project-roles] has the file access of the role it is based on.
+
+Data owners choose the permission of the datasets they create, and can change it later.
+The permissions of the datasets Hopsworks creates are fixed.
+
+### Compute and services
+
+Each project gets its own Kubernetes namespace, and the notebooks, jobs, terminals and model deployments of the project run in it.
+A network policy stops pods in other project namespaces from opening connections to the pods of your project.
+It is on by default, and platform administrators configure it when they install Hopsworks.
+
+The other services keep a separate space per project as well:
+
+- The offline and online feature stores are databases of their own for each project.
+- A Kafka topic belongs to the project that created it.
+- OpenSearch indexes, including the vector index, are kept per project.
+- A Trino catalog belongs either to the project or, for a [private catalog][private-catalogs], to the user who created it.
+- A secret is either private to you or visible to the members of one project.
+
+### Sharing across projects { #sharing-across-projects }
+
+The only way across the project boundary is a share a Data owner creates on purpose:
+
+- **Share a dataset** with another project, read-only or editable, see [Sharing A Dataset][sharing-a-dataset].
+- **Share the feature store** with another project, always read-only, see [Sharing the entire feature store][sharing-the-entire-feature-store].
+- **Publish a dataset** to the whole cluster, which makes it read-only and lets any project import it.
+
+The members of the receiving project get access as soon as the share is created, as far as their role allows, and so does anyone who joins that project later.
+Members with the Feature store restricted role do not get access to shared feature stores or feature groups.
+Revoking the share removes the access again.
+[Data Storage and Sharing][data-storage-and-sharing] shows how shares look across projects.
+
+## User home directories { #user-home-directories }
+
+A project is shared by a team, but some files belong to one person: notebooks in progress, an SSH key, the settings and logins of coding agents, the credentials of a data source.
+Since Hopsworks 5.0, every member has a private home directory in each project for these.
+
+### Where to find it
+
+Your home directory is `/Projects/<project>/Users/<username>`, in the project's `Users` dataset, for example `/Projects/fraud_detection/Users/alice`.
+
+- In the file browser, open the `Users` dataset: you see your own home directory, and not those of other members.
+- In a [terminal][terminal], your home directory is mounted at `/hopsfs/Users/<username>`, and the shell starts there.
+- In the Python client, [`Project.home_path`][hopsworks_common.project.Project.home_path] returns its path in HopsFS.
+
+```python
+import hopsworks
+
+
+project = hopsworks.login()
+
+# For example /Projects/fraud_detection/Users/alice
+print(project.home_path)
+```
+
+Hopsworks also uses your home directory as the default place for your own work.
+Jupyter, Git and the web terminal start there.
+Coding agents keep their settings and logins in `.claude` and `.codex`, and read the instructions Hopsworks writes into `AGENTS.md`.
+Your `.ssh` directory and your `.bashrc` live there too.
+
+### Who can open it
+
+Only you.
+Other members, the Data owners and the project owner included, cannot list, read, change, move or delete anything in your home directory.
+This holds everywhere: in the file browser, the REST API, the Python client and search, and in the notebooks, jobs and terminals other members run.
+
+The `Users` dataset is managed by Hopsworks:
+
+- Hopsworks creates a home directory when a member joins and hands it over or deletes it when they leave.
+  Nobody can rename or delete one directly, or create anything next to the home directories.
+- The `Users` dataset cannot be shared with another project or published to the cluster.
+
+!!! tip "Sharing a file with your team"
+    To give teammates a file from your home directory, copy it into a project dataset such as `Resources`.
+
+### When it is created
+
+- The project owner's home directory is created with the project.
+- A member's home directory is created when they join the project.
+  The files Hopsworks prepares in it, for coding agents and the shell, follow in the background within moments.
+- Service accounts, such as the ones Hopsworks adds for the online feature store and model serving, do not get one.
+- Projects created before Hopsworks 5.0 get the `Users` dataset and a home directory for every member automatically after the upgrade.
+
+### When a member leaves
+
+Removing a member hands their home directory, with everything in it, to a Data owner of the project, or deletes it if you ask for that.
+The removed member loses access to it, as they do to the rest of the project.
+The Data owner who takes it over finds it in the `Users` dataset under the removed member's name, next to their own, and from then on it is private to them.
+If the removed member joins again later, they get a new home directory, and the files they left stay with the Data owner who took them over.
+[What happens to a removed member's files][what-happens-to-a-removed-members-files] describes the hand-over.
+
+### Good to know
+
+- Files in home directories count towards the storage quota of the project.
+- Home directories keep the members of a project apart, but not from the platform itself: Hopsworks creates and maintains them, and an operator with administrative access to HopsFS can reach them.
+  Keep passwords and tokens in [secrets][how-to-create-a-secret] rather than in files.
+
+================================================================================
 # Data Storage and Sharing
 Source: https://docs.hopsworks.ai/latest/concepts/projects/storage/
 
@@ -555,6 +711,7 @@ Every project in Hopsworks has its own private assets:
 
 - a Feature Store (including both Online and Offline Stores)
 - a Filesystem subtree (all directory and files under /Projects/<project_name>/)
+- a private home directory for each member, in the `Users` dataset
 - a Model Registry
 - Model Deployments
 - Kafka topics
@@ -562,7 +719,13 @@ Every project in Hopsworks has its own private assets:
 - a Hive Database
 
 Access control to these assets is controlled using project membership ACLs (access-control lists).
-Users in a project who have a *Data Owner* role have read/write access to these assets.  Users in a project who have a *Data Scientist* role have mostly read-only access to these assets, with the exception of the ability to write to well-known directories (Resources, Jupyter, Logs).
+What a member can do with these assets depends on their role.
+For the files in the project's datasets, it also depends on each dataset's permission.
+Users who have a *Data Owner* role can write to every dataset that is not read-only.
+Users who have a *Data Scientist* role can write to the datasets that are editable by all, which include `Resources`, `Jupyter`, `Logs` and `Models`.
+They can read the feature store and the datasets that are editable by owners.
+A member's home directory is open to that member only, whatever the role of the others.
+[Project and User Isolation][project-and-user-isolation] explains the dataset permissions and the home directories in detail.
 
 However, it is often desirable to share assets between projects, with read-only, read/write privileges, and to restrict the privileges to specific role (e.g., Data Owners) in the target project.
 In Hopsworks, you can explicitly share assets between projects without copying the assets.
@@ -9490,6 +9653,11 @@ Topics count against the project's Kafka topic quota, which an administrator can
 When the cluster is configured to use an [external Kafka cluster][external-kafka-cluster], Hopsworks creates the topic there too, unless it already exists, in which case it is used as it is.
 The `kafka_connector` data source of the project needs permission to create topics for that, as described in that guide.
 
+## OnlineFS offsets { #onlinefs-project-offsets }
+
+OnlineFS saves, for each partition of an online topic, the offset it resumes from.
+Cluster administrators see these offsets, and can move them, in `Cluster Settings` → `OnlineFS`, as described in [Kafka offsets][onlinefs-offsets-admin].
+
 ## API Reference
 
 [`FeatureGroup`][hsfs.feature_group.FeatureGroup]
@@ -17914,7 +18082,7 @@ To remove them from the project, click the delete button (:material-delete:) in 
 
 ### What happens to a removed member's files
 
-Each member has a private home directory in the project, `/Projects/<project>/Users/<username>`, holding their notebooks, their SSH key and their agent configuration.
+Each member has a [private home directory][user-home-directories] in the project, `/Projects/<project>/Users/<username>`, holding their notebooks, their SSH key and their agent configuration.
 
 When a member is removed, that directory and everything under it is transferred to another data owner. The files keep their contents and their paths; only the owner changes. The removed member loses access, as they do to the rest of the project.
 
@@ -20517,7 +20685,7 @@ Source: https://docs.hopsworks.ai/latest/user_guides/compute/terminal/
 ## Introduction
 
 Hopsworks provides a browser terminal that runs inside your project.
-The terminal is a dedicated pod running under your project user, with your HopsFS home directory mounted at `/hopsfs/Users/<username>`.
+The terminal is a dedicated pod running under your project user, with your [user home directory][user-home-directories] mounted at `/hopsfs/Users/<username>`.
 Files you create there are stored in the project file system and survive the terminal session.
 
 ## Prerequisites
@@ -20544,7 +20712,7 @@ A session expires after a fixed lifetime, four hours by default (`terminal_sessi
 
 ## Use the terminal
 
-Once connected, the panel shows a shell in your HopsFS home directory, with live CPU and memory usage of the terminal pod in the header.
+Once connected, the panel shows a shell in your user home directory, with live CPU and memory usage of the terminal pod in the header.
 
 <figure>
   <img src="../../../assets/images/guides/terminal/terminal_connected.png" alt="Connected terminal session"/>
@@ -20607,7 +20775,7 @@ When the terminal starts, the key is set as the provider's own variable (for exa
 
 A provider with no saved key disables **Start** until you save one or pick **Subscription**.
 
-**Hopsworks** runs the coding agents on a vLLM deployment of the project and needs no key, see [Coding agents][coding-agents-terminal].
+**Hopsworks** runs the coding agents on a vLLM deployment of the project, or one shared with it, and needs no key, see [Coding agents][coding-agents-terminal].
 
 ================================================================================
 # Teleport Sessions
@@ -31253,6 +31421,78 @@ Listing the project's models, and every other path, is refused with `403`.
 The LLM Gateway serves only the deployments described under [LLM Gateway][rest-api-llm-gateway]; the others stay on their own path.
 A Data Owner can turn the LLM Gateway off for the project or for one deployment, which leaves the deployment's own path as it is.
 
+### Sharing with projects { #serving-sharing }
+
+A vLLM deployment that the LLM Gateway serves can also be shared with other projects of the cluster.
+Its users call it through the owning project's LLM Gateway with their own API keys, as described under [Coding agents][coding-agents-access].
+A deployment shared with selected projects admits their members with the role Data Owner or Data Scientist, and refuses members with another role, such as Feature store restricted.
+A deployment shared with all projects admits every user with an allowed platform role, whatever their projects.
+Sharing never widens the access of the owning project's own members: a member keeps the access of their role there, so a Feature store restricted member of the owning project is refused either way.
+The Terminal lists a shared deployment only to the users it admits.
+Unlike access through external access groups, sharing does not require external users to sign in periodically: as for the owning project's members, their roles in Hopsworks decide.
+They run inference with the five operations listed above, for the deployment's own `model` only.
+They cannot list models, see or manage the deployment, or call its direct route, and each request is attributed to them in the owning project's usage.
+
+Three mechanisms grant access to a deployment, each to a different kind of caller:
+
+| Mechanism | Who it grants | Routes |
+| --- | --- | --- |
+| Project membership | Members of the owning project | LLM Gateway and direct |
+| External access groups | External users in the listed groups | LLM Gateway and direct |
+| Sharing with projects | Data Owners and Data Scientists of the selected projects, or every user with an allowed platform role when shared with all projects; never a member of the owning project | LLM Gateway only |
+
+Data Owners of the owning project decide, per deployment.
+The deployment's create and edit forms have a **Share with other projects** setting with two options:
+
+- **All projects**, which shares the deployment with every project of the cluster;
+- **Selected projects**, with a list of project names, which shares it with the members of those projects only.
+
+The deployment's Overview shows the state on its LLM Gateway card with read-only badges:
+
+- **Enabled** or **Disabled**, whether the LLM Gateway serves the deployment;
+- the sharing state: **Shared with all projects**, **Shared with N projects** followed by one badge per project name, or **Not shared with any project**.
+
+Project members see the badges, and only Data Owners change the setting.
+The setting is disabled, with the reason shown under it, when the deployment is not served by the LLM Gateway or when an administrator turned sharing off for the cluster, see [Access to the LLM Gateway][llm-gateway-access].
+The Overview then shows no sharing badge.
+
+With the Python client, `Deployment` reads and changes the same state:
+
+```python
+import hopsworks
+
+
+project = hopsworks.login()
+ms = project.get_model_serving()
+
+deployment = ms.get_deployment("my_llm_deployment")
+
+print(deployment.shared_with)  # {'all_projects': True, 'projects': []}
+
+# Restrict it to two projects
+deployment.unshare(all_projects=True)
+deployment.share_with(projects=["analytics", "research"])
+print(deployment.shared_with)  # {'all_projects': False, 'projects': [...]}
+```
+
+`share_with` adds the named projects and `unshare` removes them from what is stored when the call reaches the backend, so two Data Owners changing the sharing at the same time do not undo each other's change.
+
+A new LLM deployment that the LLM Gateway serves is shared with all projects by default.
+A deployment created before the upgrade that introduced sharing stays project-only until a Data Owner shares it.
+If the LLM Gateway did not serve it, turning the LLM Gateway on for it with the REST API or `set_llm_gateway(True)` shares it with all projects, as for a new deployment.
+Turning the LLM Gateway on for the project does not share anything: a deployment created while the project's LLM Gateway was off stays project-only until a Data Owner shares it.
+The create and edit forms send the sharing they show with the deployment, so it is stored before the deployment is exposed and the all-projects default does not apply.
+A choice a Data Owner made, including switching **All projects** off, is kept when the deployment leaves and joins the LLM Gateway again.
+
+!!! api "API reference"
+
+    - <code class="doc-symbol doc-symbol-class"></code> [`Deployment`][hsml.deployment.Deployment]
+        - <code class="doc-symbol doc-symbol-method"></code> [`shared_with`][hsml.deployment.Deployment.shared_with]
+        - <code class="doc-symbol doc-symbol-method"></code> [`share_with`][hsml.deployment.Deployment.share_with]
+        - <code class="doc-symbol doc-symbol-method"></code> [`unshare`][hsml.deployment.Deployment.unshare]
+
+    <a class="hops-api-cta" href="../../../../python-api/hopsworks/">Browse the full Python API :material-arrow-right:</a>
+
 ### Limits and traces of the LLM Gateway
 
 An administrator can set token and request limits on the LLM Gateway, per project, per user and per deployment, as described under [Rate limits and token quotas][llm-gateway-rate-limits].
@@ -34133,7 +34373,13 @@ Claude Code needs vLLM v0.28.0 or later on this route, the first version it was 
 
 ## Access { #coding-agents-access }
 
-Both routes accept the same callers: members of the project, and external users whose groups have [external access][serving-external-access] to the deployment.
+The callers differ by route:
+
+- Members of the project use both routes.
+- External users whose groups have [external access][serving-external-access] to the deployment use both routes.
+- Members of other projects use the owning project's LLM Gateway only, for the deployments [shared][serving-sharing] with their project.
+  They send the owning project's namespace in the URL and use their own API key.
+
 Each request needs an [API key][how-to-create-an-api-key] with the **serving** scope, in one of two headers:
 
 - `Authorization: Bearer <key>`, which OpenAI-compatible clients and Claude Code's `ANTHROPIC_AUTH_TOKEN` send.
@@ -34141,13 +34387,15 @@ Each request needs an [API key][how-to-create-an-api-key] with the **serving** s
 
 Set only one of the two: a request carrying a different API key in each header is refused with `401`.
 
-External users cannot list models, so `GET /v1/models` answers `403` for them.
+Members of other projects and external users cannot list models, so `GET /v1/models` answers `403` for them.
 They set the model explicitly and turn off model discovery in agents that have it.
 
 ## In the Terminal { #coding-agents-terminal }
 
-When you [start a Terminal][start-the-terminal], choose **Hopsworks** as the LLM provider and pick a running vLLM deployment of the project.
-No API key is needed, because the Terminal already holds one.
+When you [start a Terminal][start-the-terminal], choose **Hopsworks** as the LLM provider and pick a running vLLM deployment of the project, or one shared with it.
+The list is grouped: **This project** first, then one **Shared by `<project>`** group for each project that shares deployments with you.
+A shared deployment is listed when it is shared with all projects or with any project you are a Data Owner or Data Scientist of, and is left out while it is not running or when your role in the owning project is another one, since the LLM Gateway would refuse you.
+No API key is needed, because the Terminal already holds one: a shared deployment is reached through the owning project's LLM Gateway with the serving API key of the Terminal's own project.
 Claude Code, Codex, opencode, Copilot CLI, pi and Hermes then start configured for the deployment and its context window.
 
 Each deployment in the list shows the route the agents will take:
@@ -34313,6 +34561,31 @@ deployment.get_anthropic_url()  # https://<host>/v1/<project>/<deployment>
         - <code class="doc-symbol doc-symbol-method"></code> [`get_anthropic_url`][hsml.deployment.Deployment.get_anthropic_url]
 
     <a class="hops-api-cta" href="../../../../python-api/hopsworks/">Browse the full Python API :material-arrow-right:</a>
+
+### A deployment of another project { #coding-agents-python-shared }
+
+`ModelServing` and `Deployment` build the URLs of the project they belong to.
+The SDK has no helper for the URL of a deployment shared by another project, so write it by hand from the inference endpoint and the owning project's namespace, and authenticate with your own API key:
+
+```python
+import os
+
+from openai import OpenAI
+
+
+owner_namespace = "<owner namespace>"
+client = OpenAI(
+    base_url=f"https://<host>/v1/{owner_namespace}/v1",
+    api_key=os.environ["HOPSWORKS_SERVING_KEY"],
+)
+response = client.chat.completions.create(
+    model="<deployment>",
+    messages=[{"role": "user", "content": "Hello"}],
+)
+```
+
+The Anthropic Messages API of the same deployment has the base URL `https://<host>/v1/<owner namespace>/v1/anthropic`.
+The deployment name goes in `model`, as for the project's own LLM Gateway.
 
 ## TLS { #coding-agents-tls }
 
@@ -38796,14 +39069,47 @@ Its filter chain checks the API key before anything else, so `GET /v1/models` ne
 ## Access to the LLM Gateway { #llm-gateway-access }
 
 Project members with an allowed role can use their project's LLM Gateway.
+Members of other projects can use the deployments shared with them, through the owning project's LLM Gateway.
 Two switches, both on by default, narrow what it serves:
 
 - The project switch turns the LLM Gateway off for a whole project, which then answers `404`.
 - The deployment switch keeps one LLM deployment off the LLM Gateway while the others stay on it.
   The deployment is still reachable on its per-deployment path.
 
-Only the project's Data Owners change either switch.
+Only the project's Data Owners change these switches.
 A change takes effect without restarting a deployment: the backend adds or removes the project's routes.
+
+### Sharing with projects { #llm-gateway-sharing }
+
+A Data Owner shares a vLLM deployment that the LLM Gateway serves with all projects or with selected projects, as described under [Sharing with projects][serving-sharing].
+Members of the projects it is shared with use the owning project's LLM Gateway with their own API keys, with the owning project's namespace in the URL, for these operations only:
+
+- Chat completions, `/v1/chat/completions`
+- Completions, `/v1/completions`
+- Embeddings, `/v1/embeddings`
+- Responses, `/v1/responses`
+- Anthropic messages, `/anthropic/v1/messages`
+
+Listing models and every other path are refused for them with `403`, and they have no access to the deployment's per-deployment path.
+A deployment shared with all projects admits every user with an allowed platform role, an administrator included, whatever the project.
+A member of the owning project is held to their role there, so sharing never widens the access of a Feature store restricted or Observer member of it.
+
+A new vLLM deployment that the LLM Gateway serves is shared with all projects.
+A deployment that existed before the upgrade that introduced sharing stays project-only until a Data Owner shares it.
+Turning the LLM Gateway on for the project does not share anything: a deployment created while the project's LLM Gateway was off stays project-only until a Data Owner shares it.
+
+The cluster variable `serving_sharing_enabled` controls the feature:
+
+| Variable | Default | Effect |
+| --- | --- | --- |
+| `serving_sharing_enabled` | `true` | When `false`, no deployment is shared, the **Share with other projects** setting of the deployment forms is disabled, the Overview shows no sharing badge, the Terminal lists no shared deployment and the sharing API answers error code `240078` |
+
+Set it with the Hopsworks Helm chart value `hopsworks.variables.serving_sharing_enabled`.
+The chart writes the value on every install and upgrade, so a change made in [Cluster Configuration][cluster-configuration] lasts until the next upgrade.
+A change reaches the LLM Gateway's routes within about a minute.
+The sharing choices of the Data Owners are kept while it is `false`, and apply again when it is `true`.
+
+### External users { #llm-gateway-access-external }
 
 External users reach a deployment through its External access groups, described in [External access][serving-external-access], and those groups also grant its use through the LLM Gateway.
 An external user whose groups are listed for a deployment can send requests with that deployment as the `model`, and no others, to these operations only:
@@ -38839,10 +39145,10 @@ Starting it again later has the same effect again.
 
 ## Identity headers { #llm-gateway-identity }
 
-For a request that passes the check, `model-serving-authenticator` returns three headers that Envoy adds to the request, for members and external users alike:
+For a request that passes the check, `model-serving-authenticator` returns three headers that Envoy adds to the request, for members, members of other projects and external users alike:
 
 - `x-hopsworks-user`, the username.
-- `x-hopsworks-project`, the project's namespace.
+- `x-hopsworks-project`, the namespace of the project that owns the deployment.
 - `x-hopsworks-project-id`, its numeric id.
 
 The rate limits, the traces, the access logs and the usage metrics are keyed on them.
@@ -39022,7 +39328,7 @@ The `OpenSearchCleaner` deletes an index older than `elastic_logs_index_expirati
 The ext_proc sidecar's metrics follow the OpenTelemetry generative AI conventions, for example `gen_ai_client_token_usage` and `gen_ai_server_request_duration_seconds`.
 They are labelled with the model, the backend, `<Hopsworks namespace>/<project namespace>-<deployment>-aibackend`, and `hopsworks_user`, taken from `x-hopsworks-user`.
 Prometheus sets their `namespace` label to the project's namespace, so token usage can be summed per project, per deployment and per user.
-The number of `hopsworks_user` values is bounded by the number of project members and of external users granted access to a deployment.
+A deployment shared with all projects admits every user of the cluster, so the number of `hopsworks_user` values is bounded by the number of users of the cluster, external users granted access to a deployment included.
 
 Grafana shows them in the ModelServing folder:
 
@@ -39041,6 +39347,7 @@ The access logs carry the same user, model and token counts per request, for aud
 - While the LLM Gateway is published, a vLLM deployment created without a minimum number of instances gets a minimum of 1, so it does not scale to zero when idle and the LLM Gateway serves it.
   An explicit minimum of 0 is allowed, and a deployment with it is not served by the LLM Gateway.
 - Any member of the project can reach every one of its deployments through the LLM Gateway, unless a Data Owner turns it off for the project or for a deployment, as described under [Access to the LLM Gateway][llm-gateway-access].
+- Sharing is per deployment and has no finer grain: a deployment shared with a project is open to every member of it with an allowed role, and one shared with all projects to every user with an allowed role.
 - External providers, MCP and `InferencePool` backends are not part of it.
 - On RonDB 26.02 (26.02.11 and 26.02.13 tested), the queries behind the trace pages can stop a RonDB data node with error 2341, `DBQACC (Line: 2154) Check m_curr_acc->oprec_pool.getValidPtr(loopPtr) failed`.
   It happens when one statement reads the `messages` column and looks up parent spans by primary key, which the project trace list, the session view and the message search do, with the table in memory or on disk alike.
@@ -39726,8 +40033,12 @@ Administrators also see the revision of the saved settings, the revision the las
 
 ## Consumer offsets { #onlinefs-offsets }
 
-OnlineFS stores its consumer offsets in the online feature store of each project, per consumer group, topic and partition.
-It keeps the offsets of a saved connection apart from those of the Helm connection, and starts new ones whenever the saved `bootstrap.servers` changes:
+OnlineFS stores its consumer offsets in the `onlinefs.kafka_offsets` table of the RonDB it writes to, per consumer group, topic and partition, with the ID Kafka gives the topic the offset was saved for.
+When a topic is deleted and created again under the same name, after a restore that rebuilt Kafka or by hand, Kafka gives it a new ID, and OnlineFS reads each partition of the new topic from its start instead of resuming at an offset of the earlier topic.
+A running OnlineFS sees the new topic at its next Kafka metadata refresh, every 60 seconds with the chart's `metadata.max.age.ms`.
+If a topic is deleted and created again between two refreshes, OnlineFS may keep its position on the new topic until it restarts, and then reads the new topic from its start.
+
+OnlineFS keeps the offsets of a saved connection apart from those of the Helm connection, and starts new ones whenever the saved `bootstrap.servers` changes:
 
 - With the Helm connection, OnlineFS uses the offsets it has always used, so an upgraded cluster resumes where it was.
 - A saved connection whose `bootstrap.servers` differs from the previous one, or a connection saved where there was none, starts a new set of offsets.
@@ -39740,6 +40051,76 @@ Hopsworks tells Kafka clusters apart by `bootstrap.servers` alone.
 A new broker list for the same cluster, or moving a connection from the Helm values into Cluster Settings, also makes OnlineFS read the retained records again and write them to the online feature store again.
 Plan such a change for a time when that load is acceptable.
 A change of the Helm connection itself, in the Helm values, keeps the offsets of the Helm connection, as in earlier releases.
+
+### Kafka offsets { #onlinefs-offsets-admin }
+
+The `Kafka offsets` card lists the topics OnlineFS consumes: for each project with an online feature group, every topic its online feature groups write to, the project's online topic or one a feature group names itself.
+Each row shows the project, the topic and its number of partitions in Kafka.
+`Read only` marks a topic whose offsets cannot be changed, with the reason in its tooltip, as listed in [Changing offsets][onlinefs-offset-changes].
+The search matches the project or the topic name.
+
+<figure>
+  <img src="../../../assets/images/admin/onlinefs/offsets_card.png" alt="The Kafka offsets card listing the topic of the fraud_detection project with its number of partitions" />
+  <figcaption>The topics OnlineFS consumes</figcaption>
+</figure>
+
+A click on a topic opens its offsets, for each consumer group and partition:
+
+- `Min offset`: the first offset Kafka still has.
+- `Current offset`: the offset OnlineFS resumes the partition from.
+- `Max offset`: the end offset, where Kafka writes the next record.
+  A current offset equal to it means OnlineFS has processed every record of the partition.
+- `Lag`: the records OnlineFS has still to process, written or not.
+
+Every partition Kafka has is listed.
+A current offset of `-` means OnlineFS reads the partition from its min offset: it saved no offset for it, or saved one for an earlier topic of the same name, as after a restore that recreated the topic, which is marked `Earlier topic`.
+
+<figure>
+  <img src="../../../assets/images/admin/onlinefs/offsets_topic.png" alt="The offsets of the fraud_detection_onlinefs topic for the RONDB consumer group: the min, current and max offset of each partition, with the actions to change them" />
+  <figcaption>A topic's offsets</figcaption>
+</figure>
+
+OnlineFS consumes each topic in two consumer groups: `RONDB`, which writes the online feature store, and `VECTORDB`, which writes embeddings to the vector database.
+With a saved Kafka connection the groups carry a number after an `@`, such as `RONDB@3`, which changes with the saved `bootstrap.servers` as described above.
+A consumer group marked `Not read` belongs to an earlier Kafka connection, and OnlineFS no longer reads its offsets.
+`RONDB` is always listed, and `VECTORDB` once it saved an offset for the topic.
+OnlineFS runs consumers of a group only while its thread number is above 0: with `service.vectorDbThreadNumber` at `0`, the default without VectorDB ingestion, the `VECTORDB` offsets stay as they were.
+
+The offsets are those in the RonDB of the region the Hopsworks backend runs in.
+
+#### Changing offsets { #onlinefs-offset-changes }
+
+In a topic's offsets, an administrator can move partitions of one consumer group:
+
+- `Set offset` moves one selected partition to a given offset, from the first offset Kafka still has up to the end offset.
+- `Move to start` moves the selected partitions, or all of them, to the first offset Kafka still has, to process their records again.
+- `Move to end` moves them to the end offset, to skip every record written until then.
+
+The confirmation lists each partition with its min, current and max offset and the new offset.
+Its button is red for a change that skips records: `Move to end`, or an offset above the current one.
+Hopsworks then sets the new offset as the partition's `desired_offset` in `onlinefs.kafka_offsets`, the start and the end as Kafka has them at that moment.
+The OnlineFS consumer that holds the partition looks for a new offset every 10 seconds, between batches, and moves the partition there with no restart: it saves the new offset, clears `desired_offset`, records the outcome, and resumes the partition from it.
+The page reads the topic's offsets again every 5 seconds while its browser tab is visible, and says when the next read is.
+Under its current offset, a partition shows `Moving to <offset>` until OnlineFS moved it, then `Moved to <offset> by <time>`, the end of the first read that showed the move, until the page is closed.
+After a move back, OnlineFS can catch up before that read, so the current offset may already be at the max offset again.
+
+- Ingestion of other partitions and topics goes on.
+- The `RONDB` and `VECTORDB` groups move separately.
+- Moving back processes the records again under the current rules: rows are written and deletes applied again, ingestion notifications repeat, and readers can see older values until OnlineFS catches up.
+  Records Kafka no longer retains cannot be read again.
+- Moving forward skips records, which never reach the online feature store.
+- The offline feature store is not affected.
+
+Setting another offset for a partition before OnlineFS moved it replaces the first, also when two administrators set one at the same time.
+OnlineFS clears a desired offset without moving the partition when the topic was deleted and created again since it was set, once OnlineFS has seen the new topic at its metadata refresh, or when Kafka no longer has the offset, as when it deleted older records meanwhile, and logs a warning.
+The page then shows `Not moved to <offset>` with the reason instead of `Moved to <offset>`.
+A partition no OnlineFS consumer holds, as in a group whose thread number is 0, moves when a consumer gets it.
+Hopsworks logs who set which offsets; OnlineFS logs each move.
+
+A topic is read only, and its offsets cannot be changed, when:
+
+- the project's online feature store is on a satellite, whose RonDB this cluster does not change;
+- Kafka could not be asked, has no topic of this name, or gives the topic no ID.
 
 ## Startup { #onlinefs-startup }
 
@@ -39812,6 +40193,59 @@ All three restart OnlineFS as described in [Applying changes][onlinefs-applying-
 
 Every logged-in user can read the status of OnlineFS with `GET /hopsworks-api/api/onlinefs/status`, also with an API key of scope `FEATURESTORE`.
 It returns the state, the replica counts, the message, the settings state, and whether any setting is saved, without the revisions and the restart error.
+
+### Kafka offsets { #onlinefs-offsets-rest-api }
+
+Administrators can read and change the [Kafka offsets][onlinefs-offsets-admin], also with an API key of scope `ADMIN`:
+
+```text
+GET  /hopsworks-api/api/admin/onlinefs/offsets?filter=<text>&offset=<n>&limit=<n>
+GET  /hopsworks-api/api/admin/onlinefs/offsets/projects/{projectId}/topics/{topic}
+POST /hopsworks-api/api/admin/onlinefs/offsets/projects/{projectId}/topics/{topic}/changes
+```
+
+- The list returns a page of `items`, by project and topic name, with `count`, the number of topics the filter matches; `limit` is at most 100.
+- A topic returns its `topicId`, its `readOnlyReason` when its offsets cannot be changed, and `items` with an entry per consumer group and partition.
+  A field left out is unknown, such as the `offset` of a partition OnlineFS saved none for.
+- Each entry of `items` has the `offset` OnlineFS saved, the `desiredOffset` set that OnlineFS has not moved the partition to yet, `beginningOffset` and `endOffset`, the offsets Kafka has, `lag`, `activeConsumerGroup` and a `status`.
+  `lag` is the number of records OnlineFS has still to process, written or not; it is set for the current topic, and for a partition with no saved offset, in a consumer group of the current connection.
+- `lastMoveOffset` is the last desired offset OnlineFS took up for the partition, and `lastMoveOutcome` what it did with it: `MOVED`, or, without moving the partition, `EARLIER_TOPIC` (the topic was created again since), `OUT_OF_RANGE` (Kafka no longer has the offset) or `NO_TOPIC_ID` (Kafka gives the topic no ID).
+
+| `status` | Meaning |
+| --- | --- |
+| `CURRENT_TOPIC` | The offset was saved for the topic Kafka has under this name now, so OnlineFS resumes the partition from it. |
+| `EARLIER_TOPIC` | The offset was saved for an earlier topic of the same name, so OnlineFS reads the partition from its start. |
+| `TOPIC_ID_UNKNOWN` | The offset was saved without a topic ID, or Kafka gives its topics none, so which topic it belongs to is not known. |
+| `TOPIC_MISSING` | Kafka has no topic of this name. |
+| `KAFKA_UNAVAILABLE` | Hopsworks could not ask Kafka, so the offsets Kafka has and the lag are unknown. |
+| `NOT_SAVED` | OnlineFS saved no offset for the partition, so it reads it from its start. |
+
+A `POST` sets the offset partitions of one consumer group resume from:
+
+```json
+{
+  "consumerGroup": "RONDB",
+  "partitions": [3],
+  "target": "OFFSET",
+  "offset": 1981,
+  "topicId": "qIquf00TSxOofDURgAgSlg"
+}
+```
+
+- `target` is `OFFSET`, `EARLIEST` or `LATEST`, and `offset` is set for `OFFSET` only.
+  `EARLIEST` and `LATEST` are the offsets Kafka has when the request is made.
+- An empty `partitions` sets every partition the topic has.
+- `topicId` repeats the one the topic returned, so the request is refused once the topic was deleted and created again since.
+- It answers `204 No Content` once the offsets are set; OnlineFS moves the partitions as described in [Changing offsets][onlinefs-offset-changes].
+  Setting the same offsets again is safe.
+
+| Status | Error code | When |
+| --- | --- | --- |
+| 400 | `270378` | The request is invalid: no target, a consumer group OnlineFS does not read, an offset with `EARLIEST` or `LATEST`, a partition the topic does not have, or an offset outside the partition's range. |
+| 404 | `270375` | No online feature group of the project writes to the topic. |
+| 409 | `270376` | The topic is read only; the message gives the reason. |
+| 409 | `270377` | The topic was deleted and created again since its offsets were read. |
+| 503 | `270374` | The offsets cannot be read or set, as before OnlineFS has created `onlinefs.kafka_offsets`. When RonDB did not confirm the commit, the message says they may have been set: setting them again is safe. |
 
 ================================================================================
 # Security Response Headers
@@ -40043,7 +40477,7 @@ The commands assume Hopsworks is installed in the `hopsworks` namespace.
 | Upgrade | OpenSearch | What needs action |
 | ------- | ---------- | ----------------- |
 | [5.0.x to 5.1.x][upgrade-50-to-51] | 1.3.x to 2.19.x | Kubernetes 1.34 or later before the upgrade, a first Helm 4 upgrade, and from 5.0.13 or earlier to 5.1.2 or later [the Trino query history][upgrade-trino-query-history]. |
-| [5.1.x to 5.2.x][upgrade-51-to-52] | 2.19.x to 3.8.0: upgrade to 5.2.1 or later | The index pass, Kafka moves to KRaft, KEDA, Kubernetes 1.37 only afterwards, Trino, from 5.2.2 [OnlineFS and the schema migrations][upgrade-changes-from-522], and from 5.2.3 with your own image registry [the Envoy image of Python apps][upgrade-changes-from-523]. |
+| [5.1.x to 5.2.x][upgrade-51-to-52] | 2.19.x to 3.8.0: upgrade to 5.2.1 or later | The index pass, Kafka moves to KRaft, KEDA, Kubernetes 1.37 only afterwards, Trino, from 5.2.2 [OnlineFS and the schema migrations][upgrade-changes-from-522], from 5.2.3 with your own image registry [the Envoy image of Python apps][upgrade-changes-from-523], and from 5.2.5 [Istio 1.30][upgrade-istio-130]. |
 | [5.2.x to 5.3.x][upgrade-52-to-53] | stays on 3.8.0 | [Additional prerequisites][upgrade-additional-prerequisites], [Strimzi 1.3][upgrade-strimzi-13] with central before its satellites, ICEBERG feature groups in Trino, the Filebeat registry, with your own pipelines, outputs or plugins [Logstash 9][upgrade-logstash-9], the memory of the OTLP sidecar of agent deployments, [Envoy Gateway][upgrade-envoy-gateway] and [LLM Gateway][upgrade-llm-gateway] when turned on, with an external Kafka [the topics Hopsworks creates and deletes on it][upgrade-byok-topics], [notification topics and shared feature stores][upgrade-notification-topics], from 5.2.0 [the subset shares in Trino][upgrade-trino-subset-shares] and the OpenSearch security configuration, and from 5.2.0 or 5.2.1 [OnlineFS and the schema migrations][upgrade-changes-from-522]. |
 
 ## Before every upgrade { #upgrade-before-every-upgrade }
@@ -40603,6 +41037,106 @@ Clients keep their endpoint, Knative-mode deployments stay on Istio, and no depl
     The request still succeeds, but a predictor or transformer script that reads such a header no longer receives it.
     Send the value in a header whose name uses hyphens instead.
 
+### OnlineFS offsets move to `onlinefs.kafka_offsets` { #upgrade-onlinefs-offsets }
+
+From 5.3, OnlineFS keeps its consumer offsets in one table, `onlinefs.kafka_offsets`, in the RonDB it writes to, with the ID of the Kafka topic each offset was saved for, in place of a `kafka_offsets` table in the online feature store of each project.
+With the topic ID, OnlineFS reads a topic that was deleted and created again under the same name from its start, as after a restore that rebuilt Kafka, instead of resuming at an offset of the earlier topic ([Consumer offsets][onlinefs-offsets]).
+
+- **No step before `helm upgrade`.**
+  Each OnlineFS pod runs an `offsets-schema` init container before OnlineFS starts.
+  It creates the table, copies the offsets of every project into it, and lists each copied project database in `onlinefs.kafka_offsets_moved`.
+  For each consumer group, topic and partition it keeps the highest offset the project tables hold, with the topic's current ID, and leaves out the offsets of topics Kafka no longer has.
+  A pod that starts later copies only project tables not listed yet.
+- **The project tables stay until every OnlineFS pod runs 5.3.**
+  An OnlineFS pod of 5.2 reads its project's table each time Kafka gives it partitions, as during the rollout.
+  The `onlinefs-drop-legacy-offsets-<hash>-r<revision>` Job waits for the rollout of the OnlineFS Deployment to finish, then drops the listed project tables.
+  On a cluster with `global._hopsworks.full_platform: true` it holds the Flyway lease while it drops them, as the schema migrations do.
+- **The init container connects to the DDL SQL node of the release as the `onlinefs` MySQL user, and the Job as `hopsworksroot`**: the `ddl-mysqld` Service of the release, or, when RonDB is managed externally on a release with `global._hopsworks.full_platform: true`, the consul name in `onlinefs.dependencies.mysql.ddlConsulServiceName` (`mysqlddl`).
+  A satellite cluster (`global._hopsworks.full_platform: false`) always connects to the Service, also with an external RonDB.
+  A cluster that disables the DDL SQL node (`rondb.rondb.meta.ddlMySQLd.enabled: false`) sets `onlinefs.dependencies.mysql.serviceName: mysqld`, and also `onlinefs.dependencies.mysql.ddlConsulServiceName: mysql` when it is not a satellite and RonDB is managed externally.
+  `onlinefs.dependencies.mysql.url` overrides both.
+- **The chart's RonDB creates the `onlinefs` user** during the upgrade, with its password in the `onlinefs` key of the `mysql-users-secrets` Secret, and the grants below.
+  With RonDB managed externally, create it before the upgrade and add its password to the Secret, or set `onlinefs.dependencies.mysql.user: hopsworksroot`:
+
+    ```sql
+    CREATE USER 'onlinefs'@'%' IDENTIFIED BY '<password>';
+    GRANT NDB_STORED_USER ON *.* TO 'onlinefs'@'%';
+    GRANT CREATE, SELECT, INSERT, UPDATE ON onlinefs.* TO 'onlinefs'@'%';
+    GRANT SELECT ON *.* TO 'onlinefs'@'%';
+    ```
+
+- **With `onlinefs.rbac.useExistingRole`**, the role needs `get`, `list` and `watch` on `deployments`, and on a cluster with `global._hopsworks.full_platform: true` the lease rules of the chart's `onlinefs-role`, for the Job.
+- **A step that fails keeps the pod from starting.**
+  It reads every project table before it writes, so a step that fails while it copies leaves every project table as it is, and the next start copies them again.
+  The pod stays in `Init:Error` or `Init:CrashLoopBackOff`, and the log names the database:
+
+    ```sh
+    kubectl logs <onlinefs-pod> -c offsets-schema -n <namespace>
+    ```
+
+  The step gives up after `onlinefs.offsetsSchemaBudgetSeconds`, 900 seconds by default, its wait for Hopsworks to answer with the OnlineFS settings included, and Kubernetes starts it again.
+  Fix the cause, as described in [If the offsets-schema step fails][upgrade-onlinefs-offsets-failures], and the next start of the pod runs it again.
+- **Records written during the rollout can be written to the online feature store twice, never skipped.**
+  A new OnlineFS pod resumes a partition from the offset copied when the first new pod started, so it writes again the records the pods of the earlier release processed since.
+- **On satellite clusters**, upgraded after central as [Strimzi 1.3][upgrade-strimzi-13] requires, a project created after central's upgrade has no offsets table on a satellite that is not upgraded yet.
+  The satellite's OnlineFS logs `Failed to save offsets` for that project and keeps writing its rows, but reads the project's online topics again from their start when it restarts, and once more at the satellite's upgrade.
+- **Rolling OnlineFS back to 5.2** after the Job dropped the project tables makes it read every online topic again from its earliest retained record, because the tables it reads are gone.
+  Before the Job ran, it resumes from the project tables, at the offsets they held when the 5.3 pods started.
+  An offset set in [Kafka offsets][onlinefs-offsets-admin] that OnlineFS had not applied yet waits in `onlinefs.kafka_offsets`, and applies once OnlineFS is upgraded again if the topic was not created again meanwhile and Kafka still has the offset.
+- **A restore needs no step for the offsets on a Kafka that gives its topics IDs**, as the Kafka the chart installs does.
+  `onlinefs.kafka_offsets` is in the RonDB backup like any other database, and after a restore that rebuilt Kafka, OnlineFS reads the recreated topics from their start.
+  An offset saved without a topic ID, by a consumer group of an earlier Kafka connection or on a Kafka that gives no IDs, has nothing to check against, and OnlineFS resumes from it.
+
+#### If the offsets-schema step fails { #upgrade-onlinefs-offsets-failures }
+
+A step that fails logs `Failed to set up onlinefs.kafka_offsets, OnlineFS does not start`, followed by the error, in the `offsets-schema` container of a pod that is not `Running`:
+
+```sh
+kubectl logs <onlinefs-pod> -c offsets-schema -n <namespace>
+```
+
+| The error | What it means | What to do |
+| --- | --- | --- |
+| `Hopsworks did not answer with the OnlineFS settings within 900 s` | Hopsworks did not answer within the step's time, `onlinefs.offsetsSchemaBudgetSeconds`. Nothing was changed. | Wait until the `hopsworks-instance` pods are ready. The next start runs the step again. |
+| `Communications link failure`, `UnknownHostException` or `Access denied for user 'onlinefs'` | The step cannot reach or log in to the SQL node. Nothing was changed. | While the upgrade restarts the SQL node, or the chart's RonDB has not created the `onlinefs` user yet, this passes on its own. Otherwise check the SQL node the step connects to, as described above, the user, and the `onlinefs` key of the `mysql-users-secrets` Secret. |
+| `Got error 4009 'No data node(s) available'` | RonDB's data nodes are restarting or down, as while the upgrade restarts them. Nothing was changed. | The next start runs the step again once the data nodes are up. |
+| `onlinefs.kafka_offsets has the columns [...], OnlineFS maps [...]` | The table exists with columns OnlineFS does not map, because it was created or changed outside OnlineFS. Nothing was moved. | Do not drop it, it holds the offsets. Change its columns to the ones the message lists after `OnlineFS maps`, keeping its rows. |
+| `Failed to read a per-project kafka_offsets, it is kept as it is`, with the database | The table of that project cannot be read. A single such table stops the whole step: nothing was written, and every project table is kept. | Repair that table, from the RonDB backup if needed. A table that cannot be repaired can be dropped, as described below. |
+| A Kafka error, such as `org.apache.kafka.common.errors.TimeoutException` | The step could not ask Kafka for the IDs of the topics. Nothing was written. | Check that OnlineFS reaches Kafka, as for its own consumers. |
+| `onlinefs.kafka_offsets was not set up within 900 s` | The step ran out of time while it copied the offsets. A project table counts as copied only once every offset is written, so the next start reads every project table and writes every offset again, and needs as long. | Raise `onlinefs.offsetsSchemaBudgetSeconds` and run `helm upgrade`. Offsets written already keep their values. |
+
+The Job logs each table it drops, and `Dropped <n> per-project kafka_offsets, none is left` when it is done:
+
+```sh
+kubectl get jobs -n <namespace> | grep onlinefs-drop-legacy-offsets
+kubectl logs job/<job> -c drop-legacy-offsets -n <namespace>
+```
+
+It fails, and drops no table that is not listed, when a project table was not copied, as while OnlineFS is scaled to 0, or a `DROP TABLE` statement fails.
+Until a Job drops them, the tables stay, and each OnlineFS pod logs them as waiting for the drop Job when it starts.
+The Job of the next `helm upgrade` runs again; the tables can also be dropped by hand once every OnlineFS pod runs 5.3, as below.
+
+The commands below run SQL as the RonDB `root` user on the chart's `mysqlds-0` pod; with an external RonDB, run the statements on one of its SQL nodes instead.
+A project table that cannot be repaired can be dropped, so that the step moves the others:
+
+```sh
+NAMESPACE=hopsworks
+ROOT_PW=$(kubectl get secret mysql-users-secrets -n "$NAMESPACE" -o jsonpath='{.data.root}' | base64 -d)
+kubectl exec mysqlds-0 -n "$NAMESPACE" -c mysqld -- env MYSQL_PWD="$ROOT_PW" mysql -uroot -e \
+  'DROP TABLE `<database>`.kafka_offsets'
+```
+
+OnlineFS then has no offsets for the online topics of that project and reads them from their earliest retained record, so it writes the records Kafka still retains to the online feature store again, and skips none.
+
+The move has finished when every OnlineFS pod is `Running`, the Job has completed, and no project table is left:
+
+```sh
+kubectl exec mysqlds-0 -n "$NAMESPACE" -c mysqld -- env MYSQL_PWD="$ROOT_PW" mysql -uroot -N -e \
+  "SELECT table_schema FROM information_schema.tables WHERE table_name = 'kafka_offsets' AND table_schema <> 'onlinefs'"
+```
+
+[Kafka offsets][onlinefs-offsets-admin] in `Cluster Settings` → `OnlineFS` then shows the moved offsets as the current offset of each partition.
+
 ### Search index rebuild { #upgrade-53-search-reindex }
 
 After the upgrade, the `post-upgrade-opensearch-reindex-job` hook indexes the existing data sources, which 5.3 adds to search, and datasets, which a cluster upgraded from 5.1 may lack, without emptying the index.
@@ -40705,6 +41239,35 @@ Python apps pull their Envoy sidecar from `global._hopsworks.imageRegistry`, as 
 The default registry, `docker.hops.works`, has the image.
 A cluster whose `global._hopsworks.imageRegistry` is its own registry mirrors `envoyproxy/envoy:v1.38.0` there, at the path `envoyproxy/envoy`, before the upgrade, or its Python apps cannot start; the chart's `vendor_images.sh` does not list the image.
 The chart now writes `python_app_envoy_image` on every upgrade, replacing a value set by hand, so a cluster that pointed it at another image mirrors that image as above.
+
+## Changes from 5.2.5 { #upgrade-changes-from-525 }
+
+These changes ship in 5.2.5.
+They apply to an upgrade from 5.1.x to 5.2.5 or later, and from 5.2.4 or earlier to a later 5.2 release.
+
+### Istio 1.30 { #upgrade-istio-130 }
+
+Istio moves from 1.29 to 1.30.
+Istio 1.30 supports Kubernetes 1.32 to 1.36, and Istio supports the 1.30 release until about December 2026; 5.3 moves to Istio 1.31.
+
+- **Time.**
+  Each wait in the Istio install hook, the install and then istiod and each gateway rolling out, is bounded by `kserve.istio.istioctl.readinessTimeout` (15 minutes), so allow at least an hour for the hook in `helm upgrade --timeout`.
+- **Model deployments.**
+  The Istio ingress gateway and the cluster-local gateway restart once.
+  Each rolls out its new pod before it stops the old one.
+- **Your own image registry.**
+  Mirror `istio/pilot` and `istio/proxyv2` at `1.30.8` before the upgrade.
+  The chart's `vendor_images.sh` lists both.
+- **Sidecars you injected yourself.**
+  The chart injects no Istio sidecar.
+  A workload you gave an Istio sidecar keeps its 1.29 proxy until it restarts, so restart it after the upgrade.
+- **If the hook fails.**
+  Fix the cause and run `helm upgrade` again.
+  The hook stops with an error, and changes nothing, when istiod or the gateways run a release other than 1.29 or 1.30.
+- **Going back to an earlier 5.2 release.**
+  A `helm rollback` does not run the Istio install hook, so Istio stays on 1.30.
+  Do not run `helm upgrade`, or an ArgoCD sync, with a release older than 5.2.5 afterwards: its hook installs Istio 1.29 over 1.30, a downgrade Istio does not support.
+  To go back entirely, restore from the backup, as described in [Disaster Recovery][disaster-recovery].
 
 ================================================================================
 # Upgrading with Helm 4
@@ -43750,7 +44313,23 @@ olk:
                 indices: "-myindex"
 ```
 
-### In-Place Restore
+#### OnlineFS offsets after the restore { #restore-onlinefs-offsets }
+
+The RonDB backup holds the Kafka offsets OnlineFS saved, in `onlinefs.kafka_offsets`, each with the ID of the topic it was saved for.
+Kafka on the new cluster starts without the topics of the backed-up cluster, creates each online topic again when it is first written to, and gives it a new ID.
+OnlineFS reads each partition of a recreated topic from its start instead of resuming at the restored offset, so the offsets need no step after the restore, and no record written to the new topics is skipped.
+
+- Until OnlineFS saves an offset for a recreated topic, [Kafka offsets][onlinefs-offsets-admin] in `Cluster Settings` → `OnlineFS` shows no current offset for its partitions, which OnlineFS reads from their min offset, and says that Kafka has no topic of this name while Kafka has not created it yet.
+- After an [in-place restore][in-place-restore], Kafka keeps its topics and their IDs, and OnlineFS resumes at the restored offsets: it writes the records that arrived since the backup again, which brings the restored online feature store up to date with them.
+- Each OnlineFS pod runs its `offsets-schema` step when it starts, which leaves the restored table as it is.
+  If the step fails, the pod does not start, as described in [If the offsets-schema step fails][upgrade-onlinefs-offsets-failures].
+- On a Kafka that gives its topics no IDs, OnlineFS cannot tell a recreated topic from the earlier one and resumes at the restored offsets.
+  On such a Kafka, stop OnlineFS after the restore, delete the rows of `onlinefs.kafka_offsets` and start OnlineFS again, so that it reads every online topic from its start.
+- An offset set in [Kafka offsets][onlinefs-offsets-admin] that OnlineFS had not applied at the backup comes back with `onlinefs.kafka_offsets`.
+  OnlineFS clears it on a new cluster without moving the partition, since it was set for a topic Kafka no longer has.
+  After an in-place restore it applies at OnlineFS's next look, every 10 seconds; set the partition's offset again if it should not.
+
+### In-Place Restore { #in-place-restore }
 
 !!! Note
     In-place restore is available from Hopsworks version 4.8.0.
@@ -48798,6 +49377,7 @@ Do not hand-edit the tables below; regenerate them instead.
 | 120012 | `FEATURE_FLAG_NOT_ENABLED` | 400 BAD_REQUEST | Platform feature not enabled |
 | 120013 | `REQUEST_TOO_LARGE` | 413 REQUEST_ENTITY_TOO_LARGE | The request body is larger than this endpoint accepts |
 | 120014 | `LENGTH_REQUIRED` | 411 LENGTH_REQUIRED | This endpoint requires a Content-Length |
+| 120015 | `TOO_MANY_REQUESTS` | 429 TOO_MANY_REQUESTS | Too many requests |
 
 ## JobErrorCode
 
@@ -48896,6 +49476,7 @@ Do not hand-edit the tables below; regenerate them instead.
 | 130091 | `SYNC_JOB_MANAGED` | 403 FORBIDDEN | This job runs a data source sync; delete or rename it through the sync. |
 | 130092 | `PYTHON_APP_BUSY` | 409 CONFLICT | Another start, stop or cleanup of this app is in progress. Try again in a minute. |
 | 130093 | `PYTHON_APP_AGENT_INVALID` | 400 BAD_REQUEST | The agent the app names is not an agent deployment of this project. |
+| 130094 | `DLT_JOB_FILE_COLUMNS_INVALID` | 400 BAD_REQUEST | The file columns of the ingestion job are not valid. |
 
 ## RequestErrorCode
 
@@ -49114,6 +49695,9 @@ Do not hand-edit the tables below; regenerate them instead.
 | 160074 | `ACCOUNT_DELETION_PENDING_CLEANUP` | 409 CONFLICT | Account still has records awaiting background cleanup. Retry shortly. |
 | 160075 | `LLM_PROVIDER_NOT_FOUND` | 404 NOT_FOUND | LLM provider not found. |
 | 160076 | `LLM_API_KEY_MISSING` | 400 BAD_REQUEST | No API key is saved for this LLM provider. |
+| 160077 | `RATE_LIMIT_OUT_OF_RANGE` | 400 BAD_REQUEST | The user's REST API rate limit is out of range. |
+| 160078 | `LLM_PROVIDER_HAS_NO_KEY` | 400 BAD_REQUEST | This LLM provider has no API key to save or test. |
+| 160079 | `LLM_MODEL_NOT_AVAILABLE` | 400 BAD_REQUEST | There is no running vLLM deployment available to use as the LLM. |
 
 ## MetadataErrorCode
 
@@ -49291,6 +49875,17 @@ Do not hand-edit the tables below; regenerate them instead.
 | 240066 | `TRITON_IMAGE_TAG_NOT_AVAILABLE` | 400 BAD_REQUEST | Triton image tag not available |
 | 240067 | `TRITON_MODEL_REPOSITORY_NOT_VALID` | 400 BAD_REQUEST | Triton model repository not valid |
 | 240068 | `TRITON_OPTION_NOT_SUPPORTED` | 400 BAD_REQUEST | Option not supported in Triton deployments |
+| 240069 | `TRACES_QUERY_NOT_VALID` | 400 BAD_REQUEST | Trace query not valid |
+| 240070 | `PREDICTION_METRICS_UNAVAILABLE` | 503 SERVICE_UNAVAILABLE | Prediction latency metrics are unavailable: Prometheus did not answer |
+| 240071 | `RESERVED_DEPLOYMENT_NAME` | 400 BAD_REQUEST | The deployment name is reserved for the project's inference endpoint |
+| 240072 | `LLM_GATEWAY_NOT_SUPPORTED` | 400 BAD_REQUEST | The project's inference endpoint only serves KServe deployments |
+| 240073 | `EVAL_CHECK_NOT_FOUND` | 404 NOT_FOUND | Check file not found in the project |
+| 240074 | `EVAL_CHECK_TOO_LARGE` | 400 BAD_REQUEST | Check file or package larger than a check is expected to be |
+| 240075 | `RESOURCES_NOT_VALID` | 400 BAD_REQUEST | Resource configuration not valid |
+| 240076 | `MODEL_VOLUME_CONFIG_UNAVAILABLE` | 503 SERVICE_UNAVAILABLE | The LLM model volume configuration is temporarily unavailable. Retry shortly. |
+| 240077 | `SERVING_SHARING_NOT_SUPPORTED` | 400 BAD_REQUEST | Only a vLLM deployment served by the LLM gateway can be shared with other projects. |
+| 240078 | `SERVING_SHARING_DISABLED` | 400 BAD_REQUEST | Sharing deployments with other projects is disabled on this cluster. |
+| 240079 | `SERVING_SHARING_PROJECT_NOT_FOUND` | 404 NOT_FOUND | The project to share the deployment with does not exist or is the owner of the deployment. |
 
 ## InferenceErrorCode
 
@@ -49670,6 +50265,11 @@ Do not hand-edit the tables below; regenerate them instead.
 | 270366 | `ONLINEFS_FORBIDDEN` | 403 FORBIDDEN | Only the OnlineFS service user may read the OnlineFS runtime configuration. |
 | 270367 | `ONLINEFS_CONFIG_ENCRYPTION_ERROR` | 500 INTERNAL_SERVER_ERROR | Could not encrypt or decrypt the OnlineFS Kafka connection. |
 | 270368 | `ONLINEFS_CONFIG_CONFLICT` | 409 CONFLICT | The master encryption password changed while the OnlineFS configuration was saved; save it again. |
+| 270369 | `ONLINE_TABLE_QUOTA_EXCEEDED` | 400 BAD_REQUEST | The project has as many online tables as its quota allows. |
+| 270370 | `GMAIL_ACCESS_TOKEN_ERROR` | 400 BAD_REQUEST | Google refused to issue a Gmail access token for the data source's credentials. |
+| 270371 | `MAIL_SYNC_JOB_ERROR` | 400 BAD_REQUEST | The mail sync job could not be set up. |
+| 270372 | `EMBEDDING_INDEX_QUOTA_EXCEEDED` | 400 BAD_REQUEST | The project has as many embedding indices as its quota allows. |
+| 270373 | `OUTLOOK_ACCESS_TOKEN_ERROR` | 400 BAD_REQUEST | Microsoft refused to issue an Outlook access token for the data source's credentials. |
 
 ## AirflowErrorCode
 
